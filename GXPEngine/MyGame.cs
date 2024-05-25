@@ -1,25 +1,27 @@
-using GXPEngine;                                
-using System.Drawing;                           
+using GXPEngine;
+using System.Drawing;
 
-public class MyGame : Game {
+public class MyGame : Game
+{
 
-    private EasyDraw canvas;
-	Ball ball;
+    LevelManager levelManager;
+    static MyGame game;
+    Ball ball;
 
-    public MyGame() : base(1024, 768, false)     
-	{
-        ball = new Ball(new Vec2(width / 2, 700), 10, 5);	
-
-		AddChild(ball);
+    public MyGame() : base(1024, 768, false)
+    {
+        levelManager = new LevelManager(this);
+        levelManager.SpawnBalls();
     }
 
 
-	void Update() {
+    void Update()
+    {
 
-	}
+    }
 
-	static void Main()                          
-	{
-		new MyGame().Start();                   
-	}
+    static void Main()
+    {
+        new MyGame().Start();
+    }
 }
