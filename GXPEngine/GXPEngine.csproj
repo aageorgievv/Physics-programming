@@ -42,6 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Ball.cs" />
+    <Compile Include="Classes\Block.cs" />
+    <Compile Include="Classes\CollisionFrame.cs" />
     <Compile Include="Classes\LevelManager.cs" />
     <Compile Include="Classes\LineSegment.cs" />
     <Compile Include="GXPEngine\AddOns\Gizmos.cs" />

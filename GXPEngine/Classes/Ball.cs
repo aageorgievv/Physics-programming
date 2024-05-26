@@ -22,7 +22,7 @@ class Ball : EasyDraw
         this._speed = speed;
 
         SetOrigin(_radius, _radius);
-        Draw(128, 128, 128);
+        Draw(255, 255, 255);
     }
 
     void Update()
@@ -56,6 +56,7 @@ class Ball : EasyDraw
 
     void CheckForCollisions()
     {
+
         if(_position.x - _radius < level.LeftXBoundary)
         {
             float impactLeft = level.LeftXBoundary + _radius;

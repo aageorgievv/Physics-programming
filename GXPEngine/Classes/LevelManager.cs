@@ -1,4 +1,5 @@
-﻿using GXPEngine;
+﻿using System.Collections.Generic;
+using GXPEngine;
 class LevelManager : GameObject
 {
     public float LeftXBoundary
@@ -20,23 +21,23 @@ class LevelManager : GameObject
 
     private MyGame game;
     private Ball ball;
+    private Block block;
 
     float _leftXBoundary = 0;
     float _rightXBoundary = 0;
     float _topYBoundary = 0;
-    float _bottomYBoundary = 0;
-
+    private float _bottomYBoundary = 0;
     float border = 50;
+
+    List<Block> blocks = new List<Block>();
     public LevelManager(MyGame game)
     {
         this.game = game;
         game.AddChild(this);
 
-
-        //Add offset after collisions are ready
-        _leftXBoundary = border;
-        _rightXBoundary = game.width - border;
-        _topYBoundary = border;
+        _leftXBoundary = 0;
+        _rightXBoundary = game.width + 1;
+        _topYBoundary = 0;
         _bottomYBoundary = game.height - border;
 
         CreateVisualXBoundary(_leftXBoundary);
@@ -52,9 +53,21 @@ class LevelManager : GameObject
 
     public void SpawnBalls()
     {
-        ball = new Ball(this ,new Vec2(game.width / 2, 700), 10, 5);
-
+        ball = new Ball(this, new Vec2(game.width / 2, 700), 10, 5);
         game.AddChild(ball);
+    }
+
+    public void SpawnBlocks()
+    {
+        for(int y = 0; y < 6; y++)
+        {
+            for(int x = 0; x < 18; x++)
+            {
+                block = new Block(new Vec2(80 + 50 * x, 50 + 50 * y), 20);
+                blocks.Add(block);
+                game.AddChild(block);
+            }
+        }
     }
 
     void CreateVisualXBoundary(float xBoundary)

@@ -12,6 +12,7 @@ public class MyGame : Game
     {
         levelManager = new LevelManager(this);
         levelManager.SpawnBalls();
+        levelManager.SpawnBlocks();
     }
 
 
