@@ -2,26 +2,15 @@
 using GXPEngine;
 class LevelManager : GameObject
 {
-    public float LeftXBoundary
-    {
-        get { return _leftXBoundary; }
-    }
-    public float RightXBoundary
-    {
-        get { return _rightXBoundary; }
-    }
-    public float TopYBoundary
-    {
-        get { return _topYBoundary; }
-    }
-    public float BottomYBoundary
-    {
-        get { return _bottomYBoundary; }
-    }
+    public float LeftXBoundary => _leftXBoundary;
+    public float RightXBoundary => _rightXBoundary;
+    public float TopYBoundary => _topYBoundary;
+    public float BottomYBoundary => _bottomYBoundary;
 
     private MyGame game;
     private Ball ball;
     private Block block;
+    private Triangle triangle;
 
     private int spacingX = 120;
     private int spacingY = 60;
@@ -33,14 +22,15 @@ class LevelManager : GameObject
     float border = 50;
 
     List<Block> blocks = new List<Block>();
+    List<Triangle> triangles = new List<Triangle>();
     public LevelManager(MyGame game)
     {
         this.game = game;
         game.AddChild(this);
 
-        _leftXBoundary = 0;
-        _rightXBoundary = game.width + 1;
-        _topYBoundary = 0;
+        _leftXBoundary = 1;
+        _rightXBoundary = game.width;
+        _topYBoundary = 1;
         _bottomYBoundary = game.height - border;
 
         CreateVisualXBoundary(_leftXBoundary);
@@ -56,33 +46,55 @@ class LevelManager : GameObject
 
     public void SpawnBalls()
     {
-        ball = new Ball(this, new Vec2(game.width / 2, 700), 10, 5);
+        ball = new Ball(this, new Vec2(game.width / 2f, 700), 10, 5);
         game.AddChild(ball);
     }
 
-    public void SpawnBlocks()
+    public void SpawnBlocksAndTriangles()
     {
         for(int y = 0; y < 1; y++)
         {
             for(int x = 0; x < 1; x++)
             {
-                block = new Block(new Vec2(270 + spacingX * x, 350 + spacingY * y), 100, 50);
+                block = new Block(new Vec2(270 + spacingX * x, 350 + spacingY * y), 100, 100, 50);
                 blocks.Add(block);
                 game.AddChild(block);
+
+                triangle = new Triangle(new Vec2(670 + spacingX * x, 350 + spacingY * y), 100, 100, 50);
+                triangles.Add(triangle);
+                game.AddChild(triangle);
             }
         }
     }
+
+    
 
     public int GetNumberOfBlocks()
     {
         return blocks.Count;
     }
 
+    
+
     public Block GetBlock(int index)
     {
         if(index >= 0 && index < blocks.Count)
         {
             return blocks[index];
+        }
+        return null;
+    }
+
+    public int GetNumberOfTriangles()
+    {
+        return triangles.Count;
+    }
+
+    public Triangle GetTriangle(int index)
+    {
+        if(index >= 0 && index < triangles.Count)
+        {
+            return triangles[index];
         }
         return null;
     }

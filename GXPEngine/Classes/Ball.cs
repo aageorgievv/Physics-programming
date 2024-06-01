@@ -14,14 +14,14 @@ class Ball : EasyDraw
 
     private LevelManager level;
 
-    public Ball(LevelManager pLevel, Vec2 position, int radius, float speed) : base(radius * 2 + 1, radius * 2 + 1)
+    public Ball(LevelManager pLevel, Vec2 position, int radius, float speed) : base(radius * 2, radius * 2, false)
     {
         this.level = pLevel;
         this._position = position;
         this._radius = radius;
         this._speed = speed;
 
-        SetOrigin(_radius, _radius);
+        SetOrigin(radius, radius);
         Draw(255, 255, 255);
     }
 
@@ -46,17 +46,21 @@ class Ball : EasyDraw
 
         CheckBoundaryCollisions();
         CheckBlockOverlaps();
+        CheckTriangleOverlaps();
     }
 
     void Draw(byte red, byte green, byte blue)
     {
         Fill(red, green, blue);
         Stroke(red, green, blue);
-        Ellipse(_radius, _radius, 2 * _radius, 2 * _radius);
+        ShapeAlign(CenterMode.Min, CenterMode.Min);
+        Ellipse(0, 0, width, height);
     }
 
     void CheckBlockOverlaps()
     {
+        int numBlocks = level.GetNumberOfBlocks();
+
         for (int i = 0; i < level.GetNumberOfBlocks(); i++)
         {
             Block block = level.GetBlock(i);
@@ -67,23 +71,35 @@ class Ball : EasyDraw
         }
     }
 
+    void CheckTriangleOverlaps()
+    {
+        for (int i = 0; i < level.GetNumberOfTriangles(); i++)
+        {
+            Triangle triangle = level.GetTriangle(i);
+
+            foreach (CollisionFrame frame in triangle.CollisionFrames)
+            {
+                CheckTriangleCollisions(frame);
+            }
+        }
+    }
+
     bool AreBlocksOverlapping(Block block)
     {
         // Basic AABB (Axis-Aligned Bounding Box) collision detection
-        return Mathf.Abs(block._position.x - _position.x) < (width / 2 + block.width) &&
-               Mathf.Abs(block._position.y - _position.y) < (height / 2 + block.height);
+        return Mathf.Abs(block._position.x + block.width / 2f - _position.x + width / 2f) < (width / 2f + block.width / 2f) &&
+               Mathf.Abs(block._position.y + block.height / 2f - _position.y + height / 2f) < (height / 2f + block.height / 2f);
     }
 
     void ResolveBlockCollision(Block block)
     {
         // Calculate overlap in both axes
-        float overlapX = (width / 2 + block.width) - Mathf.Abs(block._position.x - _position.x);
-        float overlapY = (height / 2 + block.height) - Mathf.Abs(block._position.y - _position.y);
+        float overlapX = (width / 2f + block.width / 2f) - Mathf.Abs(block._position.x + block.width / 2f - _position.x + width / 2f);
+        float overlapY = (height / 2f + block.height / 2f) - Mathf.Abs(block._position.y + block.height / 2f - _position.y + height / 2f);
 
         // Adjust position to resolve collision
-        if(overlapX < overlapY)
+        if(overlapX <= overlapY)
         {
-
             // Reverse velocity along X axis
             _velocity.x = -_velocity.x;
         } else
@@ -92,6 +108,26 @@ class Ball : EasyDraw
             _velocity.y = -_velocity.y;
         }
     }
+
+    void CheckTriangleCollisions(CollisionFrame collisionFrame)
+    {
+        Vec2 difference = new Vec2(_position.x - collisionFrame.start.x, _position.y - collisionFrame.start.y);
+        Vec2 lineNormal = (collisionFrame.end - collisionFrame.start).Normal();
+        float ballDistance = Mathf.Abs(difference.Dot(lineNormal));
+
+        //compare distance with ball radius
+        if (ballDistance < _radius)
+        {
+            // Calculate the amount to move the ball along the normal to push it outside the line
+            float penetrationDepth = _radius - ballDistance;
+
+            // Calculate the new position by moving the ball along the normal direction
+            Vec2 newPosition = _position + lineNormal * penetrationDepth;
+
+            _velocity.Reflect(lineNormal, 1);
+        }
+    }
+
     void CheckBoundaryCollisions()
     {
         if (_position.x - _radius < level.LeftXBoundary)

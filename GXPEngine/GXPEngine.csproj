@@ -47,6 +47,7 @@
     <Compile Include="Classes\CollisionInfo.cs" />
     <Compile Include="Classes\LevelManager.cs" />
     <Compile Include="Classes\LineSegment.cs" />
+    <Compile Include="Classes\Triangle.cs" />
     <Compile Include="GXPEngine\AddOns\Gizmos.cs" />
     <Compile Include="GXPEngine\AddOns\SpriteBatch.cs" />
     <Compile Include="GXPEngine\AddOns\TiledLoader.cs" />
