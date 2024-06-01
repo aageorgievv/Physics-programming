@@ -12,9 +12,9 @@ public struct Vec2
         y = pY;
     }
 
-    public float Length()
+    public float Length() //+
     {
-        return Mathf.Sqrt(x * x + y * y);
+        return Mathf.Sqrt(x * x + y * y); 
     }
 
     public void Normalize()
@@ -57,12 +57,12 @@ public struct Vec2
         return new Vec2(scaleAmount * vector.x, scaleAmount * vector.y);
     }
 
-    public static float Deg2Rad(float degree)
+    public static float DegToRad(float degree)
     {
         return degree * (Mathf.PI / 180.0f);
     }
 
-    public static float Rad2Deg(float radians)
+    public static float RadToDeg(float radians)
     {
         return radians * (180.0f / Mathf.PI);
     }
@@ -74,7 +74,7 @@ public struct Vec2
     }
     public static Vec2 GetUnitVectorDeg(float degree)
     {
-        float radian = Deg2Rad(degree);
+        float radian = DegToRad(degree);
         return GetUnitVectorRad(radian);
     }
 
@@ -109,7 +109,7 @@ public struct Vec2
 
     public float GetAngleDegrees()
     {
-        return Rad2Deg(Mathf.Atan2(y, x));
+        return RadToDeg(Mathf.Atan2(y, x));
     }
     public float GetAngleRadians()
     {

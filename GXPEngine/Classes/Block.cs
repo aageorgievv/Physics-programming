@@ -1,27 +1,28 @@
-﻿using System.Xml.Serialization;
+﻿using System.Drawing;
+using System.Xml.Serialization;
 using GXPEngine;
 class Block : EasyDraw
 {
-    private int _radius = 20;
+    public int _radius;
+    private int _hitPoints;
 
-    private Vec2 _position;
+    public Vec2 _position;
 
-    CollisionFrame Top;
-    CollisionFrame Bottom;
-    CollisionFrame Left;
-    CollisionFrame Right;
+    private EasyDraw hitPointNumber;
 
-    public Block(Vec2 position, int radius, float speed = 0) : base(radius * 2 + 1, radius * 2 + 1)
+    public Block(Vec2 position, int radius, int hitPoints, float speed = 0) : base(radius, radius)
     {
         this._position = position;
         this._radius = radius;
+        this._hitPoints = hitPoints;
 
         x = _position.x;
         y = _position.y;
 
+        SetOrigin(radius, radius);
         Draw(0, 100, 0);
 
-        AddCollisionFrame();
+        DrawHitPoints();
     }
 
     void Update()
@@ -33,21 +34,16 @@ class Block : EasyDraw
     {
         Fill(red, green, blue);
         Stroke(red, green, blue);
-        Rect(_radius, _radius, 2 * _radius, 2 * _radius);
+        ShapeAlign(CenterMode.Min, CenterMode.Min);
+        Rect(0, 0, width,height);
     }
 
-    public void AddCollisionFrame()
+    void DrawHitPoints()
     {
-
-
-        Top = new CollisionFrame(new Vec2(0 + _radius * 2, 0 ), new Vec2(0, 0), 0xff00ff00, 3);
-        Bottom = new CollisionFrame(new Vec2(0 - 2, 0 + _radius * 2), new Vec2(0 + _radius * 2 + 1, 0 + _radius * 2), 0xff00ff00, 3);
-        Right = new CollisionFrame(new Vec2(0 + _radius * 2, 0 - 1), new Vec2(0 + _radius * 2, 0 + _radius * 2), 0xff00ff00, 3);
-        Left = new CollisionFrame(new Vec2(0, 0 - 1), new Vec2(0, 0 + _radius * 2 + 1), 0xff00ff00, 3);
-
-        AddChild(Top);
-        AddChild(Bottom);
-        AddChild(Right);
-        AddChild(Left);
+        hitPointNumber = new EasyDraw(50, 50);
+        hitPointNumber.Fill(Color.Red);
+        hitPointNumber.TextAlign(CenterMode.Center, CenterMode.Center);
+        hitPointNumber.Text(" " + _hitPoints , 25, 25);
+        AddChild(hitPointNumber);
     }
 }

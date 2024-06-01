@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Drawing.Drawing2D;
 using GXPEngine;
+using GXPEngine.Core;
+
 class Ball : EasyDraw
 {
     private int _radius = 20;
-
     private float _speed = 10;
     private float _bounciness = 1f;
 
@@ -32,7 +32,7 @@ class Ball : EasyDraw
 
     void Move()
     {
-        if(Input.GetKeyUp(Key.SPACE))
+        if (Input.GetKeyUp(Key.SPACE))
         {
             Vec2 ballToMouse = new Vec2(Input.mouseX - _position.x, Input.mouseY - _position.y);
             _velocity = ballToMouse.Normalized() * _speed;
@@ -44,7 +44,8 @@ class Ball : EasyDraw
         x = _position.x;
         y = _position.y;
 
-        CheckForCollisions();
+        CheckBoundaryCollisions();
+        CheckBlockOverlaps();
     }
 
     void Draw(byte red, byte green, byte blue)
@@ -54,10 +55,46 @@ class Ball : EasyDraw
         Ellipse(_radius, _radius, 2 * _radius, 2 * _radius);
     }
 
-    void CheckForCollisions()
+    void CheckBlockOverlaps()
     {
+        for (int i = 0; i < level.GetNumberOfBlocks(); i++)
+        {
+            Block block = level.GetBlock(i);
+            if (AreBlocksOverlapping(block))
+            {
+                ResolveBlockCollision(block);
+            }
+        }
+    }
 
-        if(_position.x - _radius < level.LeftXBoundary)
+    bool AreBlocksOverlapping(Block block)
+    {
+        // Basic AABB (Axis-Aligned Bounding Box) collision detection
+        return Mathf.Abs(block._position.x - _position.x) < (width / 2 + block.width) &&
+               Mathf.Abs(block._position.y - _position.y) < (height / 2 + block.height);
+    }
+
+    void ResolveBlockCollision(Block block)
+    {
+        // Calculate overlap in both axes
+        float overlapX = (width / 2 + block.width) - Mathf.Abs(block._position.x - _position.x);
+        float overlapY = (height / 2 + block.height) - Mathf.Abs(block._position.y - _position.y);
+
+        // Adjust position to resolve collision
+        if(overlapX < overlapY)
+        {
+
+            // Reverse velocity along X axis
+            _velocity.x = -_velocity.x;
+        } else
+        {
+            // Reverse velocity along Y axis
+            _velocity.y = -_velocity.y;
+        }
+    }
+    void CheckBoundaryCollisions()
+    {
+        if (_position.x - _radius < level.LeftXBoundary)
         {
             float impactLeft = level.LeftXBoundary + _radius;
             float timeOfImpact = (impactLeft - _oldPosition.x) / (_position.x - _oldPosition.x);
@@ -66,7 +103,6 @@ class Ball : EasyDraw
             _position.y = _oldPosition.y + timeOfImpact * _velocity.y;
             _velocity.x = -_bounciness * _velocity.x;
         }
-        
         else if (_position.x + _radius > level.RightXBoundary)
         {
             float impactRight = level.RightXBoundary - _radius;
@@ -76,16 +112,14 @@ class Ball : EasyDraw
             _velocity.x = -_bounciness * _velocity.x;
         }
 
-        if(_position.y - _radius < level.TopYBoundary)
+        if (_position.y - _radius < level.TopYBoundary)
         {
-
             float impactTop = level.TopYBoundary + _radius;
             float timeOfImpact = (impactTop - _oldPosition.y) / (_position.y - _oldPosition.y);
             _position.x = _oldPosition.x + timeOfImpact * _velocity.x;
             _position.y = _oldPosition.y + timeOfImpact * _velocity.y;
             _velocity.y = -_bounciness * _velocity.y;
         }
-
         else if (_position.y + _radius > level.BottomYBoundary)
         {
             float impactBottom = level.BottomYBoundary - _radius;
@@ -96,4 +130,3 @@ class Ball : EasyDraw
         }
     }
 }
-

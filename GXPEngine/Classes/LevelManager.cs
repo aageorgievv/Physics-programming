@@ -23,6 +23,9 @@ class LevelManager : GameObject
     private Ball ball;
     private Block block;
 
+    private int spacingX = 120;
+    private int spacingY = 60;
+
     float _leftXBoundary = 0;
     float _rightXBoundary = 0;
     float _topYBoundary = 0;
@@ -59,15 +62,29 @@ class LevelManager : GameObject
 
     public void SpawnBlocks()
     {
-        for(int y = 0; y < 6; y++)
+        for(int y = 0; y < 1; y++)
         {
-            for(int x = 0; x < 18; x++)
+            for(int x = 0; x < 1; x++)
             {
-                block = new Block(new Vec2(80 + 50 * x, 50 + 50 * y), 20);
+                block = new Block(new Vec2(270 + spacingX * x, 350 + spacingY * y), 100, 50);
                 blocks.Add(block);
                 game.AddChild(block);
             }
         }
+    }
+
+    public int GetNumberOfBlocks()
+    {
+        return blocks.Count;
+    }
+
+    public Block GetBlock(int index)
+    {
+        if(index >= 0 && index < blocks.Count)
+        {
+            return blocks[index];
+        }
+        return null;
     }
 
     void CreateVisualXBoundary(float xBoundary)
