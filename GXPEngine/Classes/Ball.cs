@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 using GXPEngine;
 using GXPEngine.Core;
 
@@ -16,10 +17,14 @@ class Ball : EasyDraw
 
     public Ball(LevelManager pLevel, Vec2 position, int radius, float speed) : base(radius * 2, radius * 2, false)
     {
+
         this.level = pLevel;
         this._position = position;
         this._radius = radius;
         this._speed = speed;
+
+        x = _position.x;
+        y = _position.y;
 
         SetOrigin(radius, radius);
         Draw(255, 255, 255);
@@ -28,11 +33,12 @@ class Ball : EasyDraw
     void Update()
     {
         Move();
+        Gizmos.DrawCross(x,y,_radius);
     }
 
     void Move()
     {
-        if (Input.GetKeyUp(Key.SPACE))
+        if(Input.GetKeyUp(Key.SPACE))
         {
             Vec2 ballToMouse = new Vec2(Input.mouseX - _position.x, Input.mouseY - _position.y);
             _velocity = ballToMouse.Normalized() * _speed;
@@ -54,17 +60,17 @@ class Ball : EasyDraw
         Fill(red, green, blue);
         Stroke(red, green, blue);
         ShapeAlign(CenterMode.Min, CenterMode.Min);
-        Ellipse(0, 0, width, height);
+        Ellipse(0, 0, width - 1, height - 1);
     }
 
     void CheckBlockOverlaps()
     {
         int numBlocks = level.GetNumberOfBlocks();
 
-        for (int i = 0; i < level.GetNumberOfBlocks(); i++)
+        for(int i = 0; i < level.GetNumberOfBlocks(); i++)
         {
             Block block = level.GetBlock(i);
-            if (AreBlocksOverlapping(block))
+            if(AreBlocksOverlapping(block))
             {
                 ResolveBlockCollision(block);
             }
@@ -73,11 +79,11 @@ class Ball : EasyDraw
 
     void CheckTriangleOverlaps()
     {
-        for (int i = 0; i < level.GetNumberOfTriangles(); i++)
+        for(int i = 0; i < level.GetNumberOfTriangles(); i++)
         {
             Triangle triangle = level.GetTriangle(i);
 
-            foreach (CollisionFrame frame in triangle.CollisionFrames)
+            foreach(CollisionFrame frame in triangle.CollisionFrames)
             {
                 CheckTriangleCollisions(frame);
             }
@@ -87,15 +93,15 @@ class Ball : EasyDraw
     bool AreBlocksOverlapping(Block block)
     {
         // Basic AABB (Axis-Aligned Bounding Box) collision detection
-        return Mathf.Abs(block._position.x + block.width / 2f - _position.x + width / 2f) < (width / 2f + block.width / 2f) &&
-               Mathf.Abs(block._position.y + block.height / 2f - _position.y + height / 2f) < (height / 2f + block.height / 2f);
+        return Mathf.Abs((block._position.x + block.width / 2f) - (_position.x + _radius)) < (_radius + block.width / 2f) &&
+               Mathf.Abs((block._position.y + block.height / 2f) - (_position.y + _radius)) < (_radius + block.height / 2f);
     }
 
     void ResolveBlockCollision(Block block)
     {
         // Calculate overlap in both axes
-        float overlapX = (width / 2f + block.width / 2f) - Mathf.Abs(block._position.x + block.width / 2f - _position.x + width / 2f);
-        float overlapY = (height / 2f + block.height / 2f) - Mathf.Abs(block._position.y + block.height / 2f - _position.y + height / 2f);
+        float overlapX = (_radius + block.width / 2f) - Mathf.Abs((block._position.x + block.width / 2f) - (_position.x + _radius));
+        float overlapY = (_radius + block.height / 2f) - Mathf.Abs((block._position.y + block.height / 2f) - (_position.y + _radius));
 
         // Adjust position to resolve collision
         if(overlapX <= overlapY)
@@ -111,26 +117,34 @@ class Ball : EasyDraw
 
     void CheckTriangleCollisions(CollisionFrame collisionFrame)
     {
-        Vec2 difference = new Vec2(_position.x - collisionFrame.start.x, _position.y - collisionFrame.start.y);
-        Vec2 lineNormal = (collisionFrame.end - collisionFrame.start).Normal();
-        float ballDistance = Mathf.Abs(difference.Dot(lineNormal));
+        /*        Vec2 difference = new Vec2(_position.x - collisionFrame.start.x, _position.y - collisionFrame.start.y);
+                Vec2 lineNormal = (collisionFrame.end - collisionFrame.start).Normal();
+                float ballDistance = difference.Dot(lineNormal);
 
-        //compare distance with ball radius
-        if (ballDistance < _radius)
-        {
-            // Calculate the amount to move the ball along the normal to push it outside the line
-            float penetrationDepth = _radius - ballDistance;
-
-            // Calculate the new position by moving the ball along the normal direction
-            Vec2 newPosition = _position + lineNormal * penetrationDepth;
-
-            _velocity.Reflect(lineNormal, 1);
-        }
+                //compare distance with ball radius
+                if(ballDistance < _radius)
+                {
+                    _velocity.Reflect(lineNormal, 1);
+                }*/
     }
 
     void CheckBoundaryCollisions()
     {
-        if (_position.x - _radius < level.LeftXBoundary)
+
+        foreach (LineSegment line in level.Lines)
+        {
+            Vec2 difference = new Vec2(_position.x - line.start.x, _position.y - line.start.y);
+            Vec2 lineNormal = (line.end - line.start).Normal();
+            float ballDistance = difference.Dot(lineNormal);
+
+            //compare distance with ball radius
+            if(ballDistance < _radius)
+            {
+                _velocity.Reflect(lineNormal, 1);
+            } 
+        }
+
+/*        if(_position.x - _radius < level.LeftXBoundary)
         {
             float impactLeft = level.LeftXBoundary + _radius;
             float timeOfImpact = (impactLeft - _oldPosition.x) / (_position.x - _oldPosition.x);
@@ -138,8 +152,7 @@ class Ball : EasyDraw
             _position.x = _oldPosition.x + timeOfImpact * _velocity.x;
             _position.y = _oldPosition.y + timeOfImpact * _velocity.y;
             _velocity.x = -_bounciness * _velocity.x;
-        }
-        else if (_position.x + _radius > level.RightXBoundary)
+        } else if(_position.x + _radius > level.RightXBoundary)
         {
             float impactRight = level.RightXBoundary - _radius;
             float timeOfImpact = (impactRight - _oldPosition.x) / (_position.x - _oldPosition.x);
@@ -148,21 +161,20 @@ class Ball : EasyDraw
             _velocity.x = -_bounciness * _velocity.x;
         }
 
-        if (_position.y - _radius < level.TopYBoundary)
+        if(_position.y - _radius < level.TopYBoundary)
         {
             float impactTop = level.TopYBoundary + _radius;
             float timeOfImpact = (impactTop - _oldPosition.y) / (_position.y - _oldPosition.y);
             _position.x = _oldPosition.x + timeOfImpact * _velocity.x;
             _position.y = _oldPosition.y + timeOfImpact * _velocity.y;
             _velocity.y = -_bounciness * _velocity.y;
-        }
-        else if (_position.y + _radius > level.BottomYBoundary)
+        } else if(_position.y + _radius > level.BottomYBoundary)
         {
             float impactBottom = level.BottomYBoundary - _radius;
             float timeOfImpact = (impactBottom - _oldPosition.y) / (_position.y - _oldPosition.y);
             _position.x = _oldPosition.x + timeOfImpact * _velocity.x;
             _position.y = _oldPosition.y + timeOfImpact * _velocity.y;
             _velocity.y = -_bounciness * _velocity.y;
-        }
+        }*/
     }
 }

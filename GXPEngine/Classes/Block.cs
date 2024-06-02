@@ -46,7 +46,6 @@ class Block : EasyDraw
     {
         hitPointNumber = new EasyDraw(width, height);
         hitPointNumber.Fill(Color.Yellow);
-        
         hitPointNumber.TextAlign(CenterMode.Center, CenterMode.Center);
         hitPointNumber.TextSize(30);
         hitPointNumber.Text(" " + _hitPoints , width / 2f - offSet, height / 2f + offSet);

@@ -27,7 +27,7 @@ class Triangle : EasyDraw
         y = _position.y;
 
 
-        Draw(0, 100, 0);
+        Draw(150, 100, 100);
         AddCollisionFrame();
         DrawHitPoints();
     }
@@ -49,7 +49,6 @@ class Triangle : EasyDraw
     {
         hitPointNumber = new EasyDraw(width, height);
         hitPointNumber.Fill(Color.Yellow);
-
         hitPointNumber.TextAlign(CenterMode.Center, CenterMode.Center);
         hitPointNumber.TextSize(30);
         hitPointNumber.Text(" " + _hitPoints, width / 2f - offSetX, height / 2f + offSetY);
@@ -58,10 +57,11 @@ class Triangle : EasyDraw
 
     public void AddCollisionFrame()
     {
+
         Bottom = new CollisionFrame(new Vec2(0, height), new Vec2(width, height), 0xff00ff00, 3);
         Right = new CollisionFrame(new Vec2(width / 2f, 0), new Vec2(width, height), 0xff00ff00, 3);
         Left = new CollisionFrame(new Vec2(width / 2f, 0), new Vec2(0, height), 0xff00ff00, 3);
-
+        
         AddChild(Bottom);
         AddChild(Right);
         AddChild(Left);
