@@ -3,6 +3,8 @@
 
 class Ball : EasyDraw
 {
+    public event System.Action<Ball> OnDestroyed;
+
     public int _radius = 10;
     private float _speed = 5;
     private float _bounciness = 1f;
@@ -99,15 +101,15 @@ class Ball : EasyDraw
     bool AreBlocksOverlapping(Block block)
     {
         // Basic AABB (Axis-Aligned Bounding Box) collision detection
-        return Mathf.Abs((block._position.x + block.width / 2f) - (_position.x + _radius)) < (_radius + block.width / 2f) &&
-               Mathf.Abs((block._position.y + block.height / 2f) - (_position.y + _radius)) < (_radius + block.height / 2f);
+        return Mathf.Abs((block.x + block.width / 2f) - (_position.x + _radius)) < (_radius + block.width / 2f) &&
+               Mathf.Abs((block.y + block.height / 2f) - (_position.y + _radius)) < (_radius + block.height / 2f);
     }
 
     void ResolveBlockCollision(Block block)
     {
         // Calculate overlap in both axes
-        float overlapX = (_radius + block.width / 2f) - Mathf.Abs((block._position.x + block.width / 2f) - (_position.x + _radius));
-        float overlapY = (_radius + block.height / 2f) - Mathf.Abs((block._position.y + block.height / 2f) - (_position.y + _radius));
+        float overlapX = (_radius + block.width / 2f) - Mathf.Abs((block.x + block.width / 2f) - (_position.x + _radius));
+        float overlapY = (_radius + block.height / 2f) - Mathf.Abs((block.y + block.height / 2f) - (_position.y + _radius));
 
         // Adjust position to resolve collision
         if(overlapX <= overlapY)
@@ -143,12 +145,18 @@ class Ball : EasyDraw
         {
             Vec2 difference = new Vec2(_position.x - line.start.x, _position.y - line.start.y);
             Vec2 lineNormal = (line.end - line.start).Normal();
-            float ballDistance = difference.Dot(lineNormal);
+            float ballDistance = Mathf.Abs(difference.Dot(lineNormal));
 
             //compare distance with ball radius
             if(ballDistance < _radius)
             {
                 _velocity.Reflect(lineNormal, 1);
+
+                if(line.side == LineSide.Bottom)
+                {
+                    LateDestroy();
+                    OnDestroyed?.Invoke(this);
+                }
             }
         }
 

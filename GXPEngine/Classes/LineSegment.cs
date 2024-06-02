@@ -2,6 +2,15 @@
 using GXPEngine.Core;
 using GXPEngine.OpenGL;
 
+public enum LineSide
+{
+    None,
+    Top,
+    Bottom,
+    Left,
+    Right
+}
+
 namespace GXPEngine
 {
     /// <summary>
@@ -9,23 +18,25 @@ namespace GXPEngine
     /// </summary>
     public class LineSegment : GameObject
     {
+        public LineSide side;
         public Vec2 start;
         public Vec2 end;
 
         public uint color = 0xffffffff;
         public uint lineWidth = 1;
 
-        public LineSegment(float pStartX, float pStartY, float pEndX, float pEndY, uint pColor = 0xffffffff, uint pLineWidth = 1)
-            : this(new Vec2(pStartX, pStartY), new Vec2(pEndX, pEndY), pColor, pLineWidth)
+        public LineSegment(float pStartX, float pStartY, float pEndX, float pEndY, LineSide side, uint pColor = 0xffffffff, uint pLineWidth = 1)
+            : this(new Vec2(pStartX, pStartY), new Vec2(pEndX, pEndY), side, pColor, pLineWidth)
         {
         }
 
-        public LineSegment(Vec2 pStart, Vec2 pEnd, uint pColor = 0xffffffff, uint pLineWidth = 1)
+        public LineSegment(Vec2 pStart, Vec2 pEnd, LineSide pSide, uint pColor = 0xffffffff, uint pLineWidth = 1)
         {
             start = pStart;
             end = pEnd;
             color = pColor;
             lineWidth = pLineWidth;
+            side = pSide;
         }
 
         //------------------------------------------------------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 using GXPEngine;
 using System;
 using System.Drawing;
+using GXPEngine.Core;
 
 public class MyGame : Game
 {
@@ -98,7 +99,25 @@ public class MyGame : Game
         rotateRadians.RotateRadians(0.785398f);
         Console.WriteLine("rotateRadians ok? " + rotateRadians);
 
+        Vec2 start = new Vec2(0, 0);
+        Vec2 end = new Vec2(1, 1);
+        Vec2 line = end - start;
+        Vec2 normal = line.Normal();
+        Console.WriteLine($"The normal of {line} is {normal}");
 
+        Vec2 first = new Vec2(0.707f, 0.707f);
+        Vec2 second = new Vec2(1, 0);
+        float dotProduct = first.Dot(second);
+        Console.WriteLine($"The dot product of {first} on {second} is {dotProduct}");
+
+        Vec2 vectorToReflect = new Vec2(1, 1);
+        Vec2 floorNormal = new Vec2(0, 1);
+        Vec2 reflectedVector = vectorToReflect;
+        reflectedVector.Reflect(floorNormal, 1f);
+        Console.WriteLine($"Reflecting {vectorToReflect} on normal {floorNormal} is {reflectedVector}");
+
+        Vec2 randomUnitVector = Vec2.RandomUnitVector();
+        Console.WriteLine($"Is random unit vector {randomUnitVector} a unit vector? - {randomUnitVector.Length() == 1f}");
     }
 
     static void Main()

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Drawing;
-using System.Reflection.Emit;
-using System.Security.Cryptography;
+﻿using System.Drawing;
 using GXPEngine;
 class Block : EasyDraw
 {
     public int _hitPoints;
     private int offSet = 5;
-
-    public Vec2 _position;
 
     private EasyDraw hitPointNumber;
 
@@ -19,11 +14,10 @@ class Block : EasyDraw
 
     public Block(Vec2 position, int width, int height, int hitPoints) : base(width, height, false)
     {
-        this._position = position;
         this._hitPoints = hitPoints;
 
-        x = _position.x;
-        y = _position.y;
+        x = position.x;
+        y = position.y;
 
         hitPointNumber = new EasyDraw(width, height);
         hitPointNumber.TextAlign(CenterMode.Center, CenterMode.Center);

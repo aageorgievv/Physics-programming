@@ -37,16 +37,17 @@ class LevelManager : GameObject
     private List<LineSegment> _lines = new List<LineSegment>();
     private List<Ball> balls = new List<Ball>();
 
+    private LineSegment bottomLine;
 
     public LevelManager(MyGame game)
     {
         this.game = game;
         game.AddChild(this);
 
-        CreateABoundary("Top");
-        CreateABoundary("Bottom");
-        CreateABoundary("Left");
-        CreateABoundary("Right");
+        CreateABoundary(LineSide.Top);
+        CreateABoundary(LineSide.Bottom);
+        CreateABoundary(LineSide.Left);
+        CreateABoundary(LineSide.Right);
 
 /*        _leftXBoundary = 1;
         _rightXBoundary = game.width;
@@ -61,7 +62,34 @@ class LevelManager : GameObject
 
     void Update()
     {
+        if (balls.Count == 0)
+        {
+            // all balls are destroyed
 
+
+            foreach (Block block in blocks)
+            {
+                block.y += spacingY;
+            }
+
+            foreach(Block block in blocks)
+            {
+                if (block.y + block.height >= bottomLine.start.y)
+                {
+                    // game over
+                    Console.WriteLine($"Game Over");
+                }
+            }
+
+            for(int x = 0; x < 10; x++)
+            {
+                block = new Block(new Vec2(35 + spacingX * x, 20 + spacingY * y), blockWidth, blockHeight, blockHealth);
+                blocks.Add(block);
+                game.AddChild(block);
+            }
+
+            SpawnBalls();
+        }
     }
 
     public void SpawnBalls()
@@ -69,9 +97,16 @@ class LevelManager : GameObject
         for (int i = 0; i < ballAmount; i++)
         {
             ball = new Ball(this, new Vec2(game.width / 2f, 700), playerRadious, playerSpeed);
+            ball.OnDestroyed += HandleBallDestroyed;
             game.AddChild(ball);
             balls.Add(ball);
         }
+    }
+
+    private void HandleBallDestroyed(Ball ball)
+    {
+        ball.OnDestroyed -= HandleBallDestroyed;
+        balls.Remove(ball);
     }
 
     public void SpawnBlocksAndTriangles()
@@ -80,7 +115,7 @@ class LevelManager : GameObject
         {
             for(int x = 0; x < 10; x++)
             {
-                block = new Block(new Vec2(35 + spacingX * x, 20 + spacingX * y), blockWidth, blockHeight, blockHealth);
+                block = new Block(new Vec2(35 + spacingX * x, 20 + spacingY * y), blockWidth, blockHeight, blockHealth);
                 blocks.Add(block);
                 game.AddChild(block);
 
@@ -123,22 +158,23 @@ class LevelManager : GameObject
         return null;
     }
 
-    void CreateABoundary(string side)
+    void CreateABoundary(LineSide side)
     {
         LineSegment line = null;
         switch (side)
         {
-            case "Top":
-                line = new LineSegment(game.width, 0, 0, 0, 0xffffffff, 1);
+            case LineSide.Top:
+                line = new LineSegment(game.width, 0, 0, 0, LineSide.Top, 0xffffffff, 1);
                 break;
-            case "Bottom":
-                line = new LineSegment(0, game.height - 50, game.width, game.height - 50, 0xffffffff, 1);
+            case LineSide.Bottom:
+                line = new LineSegment(0, game.height - 50, game.width, game.height - 50, LineSide.Bottom, 0xffffffff, 1);
                 break;
-            case "Left":
-                line = new LineSegment(1, 0, 1, game.height, 0xffffffff, 1);
+            case LineSide.Left:
+                line = new LineSegment(1, 0, 1, game.height, LineSide.Left, 0xffffffff, 1);
                 break;
-            case "Right":
-                line = new LineSegment(game.width, game.height, game.width, 0, 0xffffffff, 1);
+            case LineSide.Right:
+                line = new LineSegment(game.width, game.height, game.width, 0, LineSide.Left, 0xffffffff, 1);
+                bottomLine = line;
                 break;
         }
         game.AddChild(line);
