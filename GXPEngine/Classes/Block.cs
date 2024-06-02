@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Drawing;
+using System.Reflection.Emit;
+using System.Security.Cryptography;
 using GXPEngine;
 class Block : EasyDraw
 {
-    private int _hitPoints;
+    public int _hitPoints;
     private int offSet = 5;
 
     public Vec2 _position;
@@ -23,15 +25,18 @@ class Block : EasyDraw
         x = _position.x;
         y = _position.y;
 
+        hitPointNumber = new EasyDraw(width, height);
+        hitPointNumber.TextAlign(CenterMode.Center, CenterMode.Center);
+        hitPointNumber.TextSize(30);
+
         SetOrigin(0f, 0f);
         Draw(0, 100, 0);
-        AddCollisionFrame();
         DrawHitPoints();
     }
 
     void Update()
     {
-
+        DrawHitPoints();
     }
 
     void Draw(byte red, byte green, byte blue)
@@ -44,26 +49,14 @@ class Block : EasyDraw
 
     void DrawHitPoints()
     {
-        hitPointNumber = new EasyDraw(width, height);
+        hitPointNumber.Clear(Color.Green);
         hitPointNumber.Fill(Color.Yellow);
-        hitPointNumber.TextAlign(CenterMode.Center, CenterMode.Center);
-        hitPointNumber.TextSize(30);
         hitPointNumber.Text(" " + _hitPoints , width / 2f - offSet, height / 2f + offSet);
         AddChild(hitPointNumber);
     }
 
-    public void AddCollisionFrame()
+    public void Kill()
     {
-
-
-/*        Top = new CollisionFrame(new Vec2(0, 0), new Vec2(width, 0), 0xff00ff00, 3);
-        Bottom = new CollisionFrame(new Vec2(0, height), new Vec2(width, height), 0xff00ff00, 3);
-        Right = new CollisionFrame(new Vec2(width, 0), new Vec2(width, height), 0xff00ff00, 3);
-        Left = new CollisionFrame(new Vec2(0, 0), new Vec2(0, height), 0xff00ff00, 3);
-
-        AddChild(Top);
-        AddChild(Bottom);
-        AddChild(Right);
-        AddChild(Left);*/
+        Destroy();
     }
 }

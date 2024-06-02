@@ -1,12 +1,10 @@
-﻿using System;
-using System.Security.Cryptography;
-using GXPEngine;
-using GXPEngine.Core;
+﻿using GXPEngine;
+
 
 class Ball : EasyDraw
 {
-    private int _radius = 20;
-    private float _speed = 10;
+    public int _radius = 10;
+    private float _speed = 5;
     private float _bounciness = 1f;
 
     public Vec2 _position;
@@ -33,16 +31,18 @@ class Ball : EasyDraw
     void Update()
     {
         Move();
-        Gizmos.DrawCross(x,y,_radius);
     }
 
     void Move()
     {
+
         if(Input.GetKeyUp(Key.SPACE))
         {
+            _speed = Utils.Random(4f, 8f);
             Vec2 ballToMouse = new Vec2(Input.mouseX - _position.x, Input.mouseY - _position.y);
             _velocity = ballToMouse.Normalized() * _speed;
         }
+
 
         _oldPosition = _position;
         _position += _velocity;
@@ -52,7 +52,7 @@ class Ball : EasyDraw
 
         CheckBoundaryCollisions();
         CheckBlockOverlaps();
-        CheckTriangleOverlaps();
+        //CheckTriangleOverlaps();
     }
 
     void Draw(byte red, byte green, byte blue)
@@ -74,21 +74,27 @@ class Ball : EasyDraw
             {
                 ResolveBlockCollision(block);
             }
-        }
-    }
 
-    void CheckTriangleOverlaps()
-    {
-        for(int i = 0; i < level.GetNumberOfTriangles(); i++)
-        {
-            Triangle triangle = level.GetTriangle(i);
-
-            foreach(CollisionFrame frame in triangle.CollisionFrames)
+            if(block._hitPoints <= 0)
             {
-                CheckTriangleCollisions(frame);
+                block.Kill();
+                level.Blocks.Remove(block);
             }
         }
     }
+
+    /*    void CheckTriangleOverlaps()
+        {
+            for(int i = 0; i < level.GetNumberOfTriangles(); i++)
+            {
+                Triangle triangle = level.GetTriangle(i);
+
+                foreach(CollisionFrame frame in triangle.CollisionFrames)
+                {
+                    CheckTriangleCollisions(frame);
+                }
+            }
+        }*/
 
     bool AreBlocksOverlapping(Block block)
     {
@@ -107,10 +113,12 @@ class Ball : EasyDraw
         if(overlapX <= overlapY)
         {
             // Reverse velocity along X axis
+            block._hitPoints -= 1;
             _velocity.x = -_velocity.x;
         } else
         {
             // Reverse velocity along Y axis
+            block._hitPoints -= 1;
             _velocity.y = -_velocity.y;
         }
     }
@@ -131,7 +139,7 @@ class Ball : EasyDraw
     void CheckBoundaryCollisions()
     {
 
-        foreach (LineSegment line in level.Lines)
+        foreach(LineSegment line in level.Lines)
         {
             Vec2 difference = new Vec2(_position.x - line.start.x, _position.y - line.start.y);
             Vec2 lineNormal = (line.end - line.start).Normal();
@@ -141,40 +149,40 @@ class Ball : EasyDraw
             if(ballDistance < _radius)
             {
                 _velocity.Reflect(lineNormal, 1);
-            } 
+            }
         }
 
-/*        if(_position.x - _radius < level.LeftXBoundary)
-        {
-            float impactLeft = level.LeftXBoundary + _radius;
-            float timeOfImpact = (impactLeft - _oldPosition.x) / (_position.x - _oldPosition.x);
+        /*        if(_position.x - _radius < level.LeftXBoundary)
+                {
+                    float impactLeft = level.LeftXBoundary + _radius;
+                    float timeOfImpact = (impactLeft - _oldPosition.x) / (_position.x - _oldPosition.x);
 
-            _position.x = _oldPosition.x + timeOfImpact * _velocity.x;
-            _position.y = _oldPosition.y + timeOfImpact * _velocity.y;
-            _velocity.x = -_bounciness * _velocity.x;
-        } else if(_position.x + _radius > level.RightXBoundary)
-        {
-            float impactRight = level.RightXBoundary - _radius;
-            float timeOfImpact = (impactRight - _oldPosition.x) / (_position.x - _oldPosition.x);
-            _position.x = _oldPosition.x + timeOfImpact * _velocity.x;
-            _position.y = _oldPosition.y + timeOfImpact * _velocity.y;
-            _velocity.x = -_bounciness * _velocity.x;
-        }
+                    _position.x = _oldPosition.x + timeOfImpact * _velocity.x;
+                    _position.y = _oldPosition.y + timeOfImpact * _velocity.y;
+                    _velocity.x = -_bounciness * _velocity.x;
+                } else if(_position.x + _radius > level.RightXBoundary)
+                {
+                    float impactRight = level.RightXBoundary - _radius;
+                    float timeOfImpact = (impactRight - _oldPosition.x) / (_position.x - _oldPosition.x);
+                    _position.x = _oldPosition.x + timeOfImpact * _velocity.x;
+                    _position.y = _oldPosition.y + timeOfImpact * _velocity.y;
+                    _velocity.x = -_bounciness * _velocity.x;
+                }
 
-        if(_position.y - _radius < level.TopYBoundary)
-        {
-            float impactTop = level.TopYBoundary + _radius;
-            float timeOfImpact = (impactTop - _oldPosition.y) / (_position.y - _oldPosition.y);
-            _position.x = _oldPosition.x + timeOfImpact * _velocity.x;
-            _position.y = _oldPosition.y + timeOfImpact * _velocity.y;
-            _velocity.y = -_bounciness * _velocity.y;
-        } else if(_position.y + _radius > level.BottomYBoundary)
-        {
-            float impactBottom = level.BottomYBoundary - _radius;
-            float timeOfImpact = (impactBottom - _oldPosition.y) / (_position.y - _oldPosition.y);
-            _position.x = _oldPosition.x + timeOfImpact * _velocity.x;
-            _position.y = _oldPosition.y + timeOfImpact * _velocity.y;
-            _velocity.y = -_bounciness * _velocity.y;
-        }*/
+                if(_position.y - _radius < level.TopYBoundary)
+                {
+                    float impactTop = level.TopYBoundary + _radius;
+                    float timeOfImpact = (impactTop - _oldPosition.y) / (_position.y - _oldPosition.y);
+                    _position.x = _oldPosition.x + timeOfImpact * _velocity.x;
+                    _position.y = _oldPosition.y + timeOfImpact * _velocity.y;
+                    _velocity.y = -_bounciness * _velocity.y;
+                } else if(_position.y + _radius > level.BottomYBoundary)
+                {
+                    float impactBottom = level.BottomYBoundary - _radius;
+                    float timeOfImpact = (impactBottom - _oldPosition.y) / (_position.y - _oldPosition.y);
+                    _position.x = _oldPosition.x + timeOfImpact * _velocity.x;
+                    _position.y = _oldPosition.y + timeOfImpact * _velocity.y;
+                    _velocity.y = -_bounciness * _velocity.y;
+                }*/
     }
 }
