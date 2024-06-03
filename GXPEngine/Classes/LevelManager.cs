@@ -4,10 +4,10 @@ using System.Reflection;
 using GXPEngine;
 class LevelManager : GameObject
 {
-    public float LeftXBoundary => _leftXBoundary;
+/*    public float LeftXBoundary => _leftXBoundary;
     public float RightXBoundary => _rightXBoundary;
     public float TopYBoundary => _topYBoundary;
-    public float BottomYBoundary => _bottomYBoundary;
+    public float BottomYBoundary => _bottomYBoundary;*/
     public List<LineSegment> Lines => _lines;
     public List<Block> Blocks => blocks;
 
@@ -48,6 +48,8 @@ class LevelManager : GameObject
         CreateABoundary(LineSide.Bottom);
         CreateABoundary(LineSide.Left);
         CreateABoundary(LineSide.Right);
+        CreateABoundary(LineSide.BottomLeft);
+        CreateABoundary(LineSide.BottomRight);
 
 /*        _leftXBoundary = 1;
         _rightXBoundary = game.width;
@@ -62,19 +64,24 @@ class LevelManager : GameObject
 
     void Update()
     {
-        if (balls.Count == 0)
+        CheckBalls();
+    }
+
+    void CheckBalls()
+    {
+        if(balls.Count == 0)
         {
             // all balls are destroyed
 
 
-            foreach (Block block in blocks)
+            foreach(Block block in blocks)
             {
                 block.y += spacingY;
             }
 
             foreach(Block block in blocks)
             {
-                if (block.y + block.height >= bottomLine.start.y)
+                if(block.y + block.height >= bottomLine.start.y)
                 {
                     // game over
                     Console.WriteLine($"Game Over");
@@ -126,8 +133,6 @@ class LevelManager : GameObject
         }
     }
 
-    
-
     public int GetNumberOfBlocks()
     {
         return blocks.Count;
@@ -164,17 +169,23 @@ class LevelManager : GameObject
         switch (side)
         {
             case LineSide.Top:
-                line = new LineSegment(game.width, 0, 0, 0, LineSide.Top, 0xffffffff, 1);
+                line = new LineSegment(game.width, 0, 0, 0, side, 0xffffffff, 1);
                 break;
             case LineSide.Bottom:
-                line = new LineSegment(0, game.height - 50, game.width, game.height - 50, LineSide.Bottom, 0xffffffff, 1);
+                line = new LineSegment(0, game.height - 50, game.width, game.height - 50, side, 0xffff0000, 1);
+                bottomLine = line;
                 break;
             case LineSide.Left:
-                line = new LineSegment(1, 0, 1, game.height, LineSide.Left, 0xffffffff, 1);
+                line = new LineSegment(1, 0, 1, game.height, side, 0xffffffff, 1);
                 break;
             case LineSide.Right:
-                line = new LineSegment(game.width, game.height, game.width, 0, LineSide.Left, 0xffffffff, 1);
-                bottomLine = line;
+                line = new LineSegment(game.width, game.height, game.width, 0, side, 0xffffffff, 1);
+                break;
+            case LineSide.BottomLeft:
+                line = new LineSegment(0, game.height * 0.8f, game.width * 0.2f, game.height, side, 0xffffffff, 1);
+                break;
+            case LineSide.BottomRight:
+                line = new LineSegment(game.width, game.height * 0.8f, game.width * 0.8f, game.height, side, 0xffffffff, 1);
                 break;
         }
         game.AddChild(line);

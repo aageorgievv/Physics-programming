@@ -26,7 +26,7 @@ class Ball : EasyDraw
         x = _position.x;
         y = _position.y;
 
-        SetOrigin(radius, radius);
+        SetOrigin(0f, 0f);
         Draw(255, 255, 255);
     }
 
@@ -45,8 +45,6 @@ class Ball : EasyDraw
             _velocity = ballToMouse.Normalized() * _speed;
         }
 
-
-        _oldPosition = _position;
         _position += _velocity;
 
         x = _position.x;
@@ -67,8 +65,6 @@ class Ball : EasyDraw
 
     void CheckBlockOverlaps()
     {
-        int numBlocks = level.GetNumberOfBlocks();
-
         for(int i = 0; i < level.GetNumberOfBlocks(); i++)
         {
             Block block = level.GetBlock(i);
@@ -100,7 +96,7 @@ class Ball : EasyDraw
 
     bool AreBlocksOverlapping(Block block)
     {
-        // Basic AABB (Axis-Aligned Bounding Box) collision detection
+        // Basic AABB (Axis-Aligned Bounding Box) collision detection. The method calculates the distance between the centers of the ball and the block along the x and y axes.
         return Mathf.Abs((block.x + block.width / 2f) - (_position.x + _radius)) < (_radius + block.width / 2f) &&
                Mathf.Abs((block.y + block.height / 2f) - (_position.y + _radius)) < (_radius + block.height / 2f);
     }

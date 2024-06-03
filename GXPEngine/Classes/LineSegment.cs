@@ -8,7 +8,9 @@ public enum LineSide
     Top,
     Bottom,
     Left,
-    Right
+    Right,
+    BottomLeft,
+    BottomRight
 }
 
 namespace GXPEngine
