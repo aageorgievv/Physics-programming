@@ -149,10 +149,10 @@ class LevelManager : GameObject
         return null;
     }
 
-    public int GetNumberOfTriangles()
+/*    public int GetNumberOfTriangles()
     {
         return triangles.Count;
-    }
+    }*/
 
     public Triangle GetTriangle(int index)
     {

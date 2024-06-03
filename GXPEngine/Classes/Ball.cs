@@ -45,6 +45,7 @@ class Ball : EasyDraw
             _velocity = ballToMouse.Normalized() * _speed;
         }
 
+        _oldPosition = _position;
         _position += _velocity;
 
         x = _position.x;
