@@ -1,19 +1,29 @@
 ﻿using GXPEngine;
+using GXPEngine.Core;
 
 
 class Ball : EasyDraw
 {
     public event System.Action<Ball> OnDestroyed;
 
+    public bool hasShot = false;
+
     public int _radius = 10;
+
     private float _speed = 5;
     private float _bounciness = 1f;
 
-    public Vec2 _position;
+    public Vec2 _position
+    {
+        get { return new Vec2(x, y); }
+        set { x = value.x; y = value.y; }
+    }
     private Vec2 _oldPosition;
     public Vec2 _velocity;
 
     private LevelManager level;
+
+    private Sprite ball;
 
     public Ball(LevelManager pLevel, Vec2 position, int radius, float speed) : base(radius * 2, radius * 2, false)
     {
@@ -23,48 +33,61 @@ class Ball : EasyDraw
         this._radius = radius;
         this._speed = speed;
 
-        x = _position.x;
-        y = _position.y;
+        //Draw(255, 255, 255);
+        SetOrigin(width/2,height/2);
 
-        SetOrigin(0f, 0f);
-        Draw(255, 255, 255);
+        ball = new Sprite("Assets/circle.png");
+        ball.SetOrigin(ball.width/2, ball.height/2);
+        AddChild(ball);
+        ball.scale =  (float)radius/ball.width*2;
     }
 
     void Update()
     {
         Move();
+        //DrawBounds();
     }
 
     void Move()
     {
 
-        if(Input.GetKeyUp(Key.SPACE))
+        if (Input.GetKeyUp(Key.SPACE) && hasShot == false)
         {
             _speed = Utils.Random(4f, 8f);
-            Vec2 ballToMouse = new Vec2(Input.mouseX - _position.x, Input.mouseY - _position.y);
+            Vec2 ballToMouse = new Vec2(Input.mouseX - x, Input.mouseY - y);
             _velocity = ballToMouse.Normalized() * _speed;
+            hasShot = true;
         }
 
         _oldPosition = _position;
         _position += _velocity;
 
-        x = _position.x;
-        y = _position.y;
-
         CheckBoundaryCollisions();
         CheckBlockOverlaps();
-        //CheckTriangleOverlaps();
+        CheckTriangleOverlaps();
     }
 
     void Draw(byte red, byte green, byte blue)
     {
-        Fill(red, green, blue);
-        Stroke(red, green, blue);
-        ShapeAlign(CenterMode.Min, CenterMode.Min);
-        Ellipse(0, 0, width - 1, height - 1);
+               Fill(red, green, blue);
+                Stroke(red, green, blue);
+                ShapeAlign(CenterMode.Min, CenterMode.Min);
+                Ellipse(0, 0, width - 1, height - 1);
+
+        //_texture = new Texture2D("Assets/circle.png");
     }
 
-    void CheckBlockOverlaps()
+    void DrawBounds()
+    {
+        Vector2[] bounds = GetExtents();
+        Gizmos.DrawLine(bounds[0].x, bounds[0].y, bounds[1].x, bounds[1].y);
+        Gizmos.DrawLine(bounds[1].x, bounds[1].y, bounds[2].x, bounds[2].y);
+        Gizmos.DrawLine(bounds[2].x, bounds[2].y, bounds[3].x, bounds[3].y);
+        Gizmos.DrawLine(bounds[3].x, bounds[3].y, bounds[0].x, bounds[0].y);
+        Gizmos.DrawCross(x, y, 50, color: 0xffff00ff);
+    }
+
+void CheckBlockOverlaps()
     {
         for(int i = 0; i < level.GetNumberOfBlocks(); i++)
         {
@@ -82,18 +105,18 @@ class Ball : EasyDraw
         }
     }
 
-    /*    void CheckTriangleOverlaps()
+    void CheckTriangleOverlaps()
+    {
+        for(int i = 0; i < level.GetNumberOfTriangles(); i++)
         {
-            for(int i = 0; i < level.GetNumberOfTriangles(); i++)
-            {
-                Triangle triangle = level.GetTriangle(i);
+            Triangle triangle = level.GetTriangle(i);
 
-                foreach(CollisionFrame frame in triangle.CollisionFrames)
-                {
-                    CheckTriangleCollisions(frame);
-                }
+            foreach(CollisionFrame frame in triangle.CollisionFrames)
+            {
+                CheckTriangleCollisions(frame);
             }
-        }*/
+        }
+    }
 
     bool AreBlocksOverlapping(Block block)
     {
@@ -124,37 +147,39 @@ class Ball : EasyDraw
 
     void CheckTriangleCollisions(CollisionFrame collisionFrame)
     {
-        /*        Vec2 difference = new Vec2(_position.x - collisionFrame.start.x, _position.y - collisionFrame.start.y);
-                Vec2 lineNormal = (collisionFrame.end - collisionFrame.start).Normal();
-                float ballDistance = difference.Dot(lineNormal);
-
-                //compare distance with ball radius
-                if(ballDistance < _radius)
-                {
-                    _velocity.Reflect(lineNormal, 1);
-                }*/
+        CircleVSLineCollision(collisionFrame);
     }
 
+    void CircleVSLineCollision(LineSegment line)
+    {
+        Vector2 start = line.TransformPoint(line.start.x, line.start.y);
+        Vector2 end = line.TransformPoint(line.end.x, line.end.y);
+
+        Vec2 startConverted = new Vec2(start.x, start.y);
+        Vec2 endConverted = new Vec2(end.x, end.y);
+
+        Vec2 difference = new Vec2(x - startConverted.x, y - startConverted.y);
+        Vec2 lineNormal = (endConverted - startConverted).Normal();
+        float ballDistance = Mathf.Abs(difference.Dot(lineNormal));
+
+        //compare distance with ball radius
+        if(ballDistance < _radius)
+        {
+            _velocity.Reflect(lineNormal, 1);
+
+            if(line.side == LineSide.Bottom)
+            {
+                LateDestroy();
+                OnDestroyed?.Invoke(this);
+            }
+        }
+    }
     void CheckBoundaryCollisions()
     {
 
         foreach(LineSegment line in level.Lines)
         {
-            Vec2 difference = new Vec2(_position.x - line.start.x, _position.y - line.start.y);
-            Vec2 lineNormal = (line.end - line.start).Normal();
-            float ballDistance = Mathf.Abs(difference.Dot(lineNormal));
-
-            //compare distance with ball radius
-            if(ballDistance < _radius)
-            {
-                _velocity.Reflect(lineNormal, 1);
-
-                if(line.side == LineSide.Bottom)
-                {
-                    LateDestroy();
-                    OnDestroyed?.Invoke(this);
-                }
-            }
+            CircleVSLineCollision(line);
         }
 
         /*        if(_position.x - _radius < level.LeftXBoundary)

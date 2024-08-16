@@ -22,7 +22,7 @@ class LevelManager : GameObject
     private float _bottomYBoundary = 0;
 
     private int spacingX = 100;
-    private int spacingY = 80;
+    private int spacingY = 90;
     private int border = 50;
     private int blockWidth = 50;
     private int blockHeight = 50;
@@ -73,6 +73,7 @@ class LevelManager : GameObject
         {
             // all balls are destroyed
 
+            ball.hasShot = false;
 
             foreach(Block block in blocks)
             {
@@ -103,7 +104,7 @@ class LevelManager : GameObject
     {
         for (int i = 0; i < ballAmount; i++)
         {
-            ball = new Ball(this, new Vec2(game.width / 2f, 700), playerRadious, playerSpeed);
+            ball = new Ball(this, new Vec2(game.width / 2f, 600), playerRadious, playerSpeed);
             ball.OnDestroyed += HandleBallDestroyed;
             game.AddChild(ball);
             balls.Add(ball);
@@ -114,19 +115,23 @@ class LevelManager : GameObject
     {
         ball.OnDestroyed -= HandleBallDestroyed;
         balls.Remove(ball);
+        
     }
 
     public void SpawnBlocksAndTriangles()
     {
+        triangle = new Triangle(new Vec2(200 + spacingX * x, 100 + spacingY * y), 100, 100, 50);
+        triangles.Add(triangle);
+        game.AddChild(triangle);
         for(int y = 0; y < 4; y++)
         {
             for(int x = 0; x < 10; x++)
             {
-                block = new Block(new Vec2(35 + spacingX * x, 20 + spacingY * y), blockWidth, blockHeight, blockHealth);
+/*                block = new Block(new Vec2(35 + spacingX * x, 20 + spacingY * y), blockWidth, blockHeight, blockHealth);
                 blocks.Add(block);
-                game.AddChild(block);
+                game.AddChild(block);*/
 
-/*                triangle = new Triangle(new Vec2(670 + spacingX * x, 350 + spacingY * y), 100, 100, 50);
+/*                triangle = new Triangle(new Vec2(35 + spacingX * x, 20 + spacingY * y), 100, 100, 50);
                 triangles.Add(triangle);
                 game.AddChild(triangle);*/
             }
@@ -149,10 +154,10 @@ class LevelManager : GameObject
         return null;
     }
 
-/*    public int GetNumberOfTriangles()
+    public int GetNumberOfTriangles()
     {
         return triangles.Count;
-    }*/
+    }
 
     public Triangle GetTriangle(int index)
     {
@@ -179,7 +184,7 @@ class LevelManager : GameObject
                 line = new LineSegment(1, 0, 1, game.height, side, 0xffffffff, 1);
                 break;
             case LineSide.Right:
-                line = new LineSegment(game.width, game.height, game.width, 0, side, 0xffffffff, 1);
+                line = new LineSegment(game.width, 0, game.width, game.height, side, 0xffffffff, 1);
                 break;
             case LineSide.BottomLeft:
                 line = new LineSegment(0, game.height * 0.8f, game.width * 0.2f, game.height, side, 0xffffffff, 1);
