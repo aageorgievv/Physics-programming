@@ -163,6 +163,12 @@ public struct Vec2
         return (x * vector.x + y * vector.y);
     }
 
+    public Vec2 Project(Vec2 B)
+    {
+        return this.Dot(B) / B.Dot(B) * B;
+
+    }
+     
     public void Reflect(Vec2 normal, float bounciness)
     {
         Vec2 velocityOut = new Vec2((1 + bounciness) * Dot(normal) * normal.x, (1 + bounciness) * Dot(normal) * normal.y);

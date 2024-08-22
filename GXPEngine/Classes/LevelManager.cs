@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using GXPEngine;
 class LevelManager : GameObject
 {
-/*    public float LeftXBoundary => _leftXBoundary;
-    public float RightXBoundary => _rightXBoundary;
-    public float TopYBoundary => _topYBoundary;
-    public float BottomYBoundary => _bottomYBoundary;*/
+    /*    public float LeftXBoundary => _leftXBoundary;
+        public float RightXBoundary => _rightXBoundary;
+        public float TopYBoundary => _topYBoundary;
+        public float BottomYBoundary => _bottomYBoundary;*/
     public List<LineSegment> Lines => _lines;
     public List<Block> Blocks => blocks;
 
@@ -39,6 +40,8 @@ class LevelManager : GameObject
 
     private LineSegment bottomLine;
 
+    private CollisionFrame frame;
+
     public LevelManager(MyGame game)
     {
         this.game = game;
@@ -50,16 +53,6 @@ class LevelManager : GameObject
         CreateABoundary(LineSide.Right);
         CreateABoundary(LineSide.BottomLeft);
         CreateABoundary(LineSide.BottomRight);
-
-/*        _leftXBoundary = 1;
-        _rightXBoundary = game.width;
-        _topYBoundary = 1;
-        _bottomYBoundary = game.height - border;
-
-        CreateVisualXBoundary(_leftXBoundary);
-        CreateVisualXBoundary(_rightXBoundary);
-        CreateVisualYBoundary(_topYBoundary);
-        CreateVisualYBoundary(_bottomYBoundary);*/
     }
 
     void Update()
@@ -102,7 +95,7 @@ class LevelManager : GameObject
 
     public void SpawnBalls()
     {
-        for (int i = 0; i < ballAmount; i++)
+        for(int i = 0; i < 1 /*ballAmount*/; i++)
         {
             ball = new Ball(this, new Vec2(game.width / 2f, 600), playerRadious, playerSpeed);
             ball.OnDestroyed += HandleBallDestroyed;
@@ -115,25 +108,26 @@ class LevelManager : GameObject
     {
         ball.OnDestroyed -= HandleBallDestroyed;
         balls.Remove(ball);
-        
+
     }
 
     public void SpawnBlocksAndTriangles()
     {
-        triangle = new Triangle(new Vec2(200 + spacingX * x, 100 + spacingY * y), 100, 100, 50);
-        triangles.Add(triangle);
-        game.AddChild(triangle);
+        //triangle = new Triangle(new Vec2(400 + spacingX * x, 200 + spacingY * y), 100, 100, 50);
+        //triangles.Add(triangle);
+        //game.AddChild(triangle);
+
         for(int y = 0; y < 4; y++)
         {
             for(int x = 0; x < 10; x++)
             {
-/*                block = new Block(new Vec2(35 + spacingX * x, 20 + spacingY * y), blockWidth, blockHeight, blockHealth);
-                blocks.Add(block);
-                game.AddChild(block);*/
+                //block = new Block(new Vec2(35 + spacingX * x, 20 + spacingY * y), blockWidth, blockHeight, blockHealth);
+                //blocks.Add(block);
+                //game.AddChild(block);
 
-/*                triangle = new Triangle(new Vec2(35 + spacingX * x, 20 + spacingY * y), 100, 100, 50);
+                triangle = new Triangle(new Vec2(35 + spacingX * x, 20 + spacingY * y), 50, 50, 25);
                 triangles.Add(triangle);
-                game.AddChild(triangle);*/
+                game.AddChild(triangle);
             }
         }
     }
@@ -143,7 +137,7 @@ class LevelManager : GameObject
         return blocks.Count;
     }
 
-    
+
 
     public Block GetBlock(int index)
     {
@@ -171,7 +165,7 @@ class LevelManager : GameObject
     void CreateABoundary(LineSide side)
     {
         LineSegment line = null;
-        switch (side)
+        switch(side)
         {
             case LineSide.Top:
                 line = new LineSegment(game.width, 0, 0, 0, side, 0xffffffff, 1);
@@ -196,14 +190,4 @@ class LevelManager : GameObject
         game.AddChild(line);
         Lines.Add(line);
     }
-
-/*        void CreateVisualXBoundary(float xBoundary)
-    {
-        game.AddChild(new LineSegment(xBoundary, 0, xBoundary, game.height, 0xffffffff, 1));
-    }
-
-    void CreateVisualYBoundary(float yBoundary)
-    {
-        game.AddChild(new LineSegment(0, yBoundary, game.width, yBoundary, 0xffffffff, 1));
-    }*/
 }
