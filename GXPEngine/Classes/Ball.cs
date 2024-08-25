@@ -91,7 +91,7 @@ class Ball : EasyDraw
 
     void CheckBlockOverlaps()
     {
-/*        for(int i = 0; i < level.GetNumberOfBlocks(); i++)
+        for(int i = 0; i < level.GetNumberOfBlocks(); i++)
         {
             Block block = level.GetBlock(i);
 
@@ -99,7 +99,7 @@ class Ball : EasyDraw
             {
                 CheckBrickCollisions(frame);
             }
-        }*/
+        }
     }
 
     void CheckTriangleOverlaps()

@@ -103,21 +103,20 @@ class LevelManager : GameObject
                 }
             }
 
-            if (!spawnedTriangle)
+            if(!spawnedTriangle)
             {
-                for (int x = 0; x < 10; x++)
+                for(int x = 0; x < 10; x++)
                 {
                     triangle = new Triangle(new Vec2(20 + spacingX * x, 20 + spacingY * y), triangleSize, triangleSize, brickHealth);
                     triangles.Add(triangle);
                     game.AddChild(triangle);
                     spawnedTriangle = true;
                 }
-            }
-            else
+            } else
             {
                 for(int x = 0; x < 10; x++)
                 {
-                    block = new Block(new Vec2(35 + spacingX * x, 30 + spacingY * y), blockSize, blockSize, brickHealth);
+                    block = new Block(new Vec2(35 + spacingX * x, 35 + spacingY * y), blockSize, blockSize, brickHealth);
                     blocks.Add(block);
                     game.AddChild(block);
                     spawnedTriangle = false;
@@ -149,6 +148,10 @@ class LevelManager : GameObject
 
     public void SpawnBlocksAndTriangles()
     {
+        /*        block = new Block(new Vec2(300, 400), blockSize, blockSize, brickHealth);
+                blocks.Add(block);
+                game.AddChild(block);*/
+
         /*        triangle = new Triangle(new Vec2(400 + spacingX * x, 200 + spacingY * y), 100, 100, 50);
                 triangles.Add(triangle);
                 game.AddChild(triangle);*/

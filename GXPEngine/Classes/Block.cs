@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using GXPEngine;
 class Block : EasyDraw
 {
@@ -12,6 +13,8 @@ class Block : EasyDraw
     CollisionFrame Left;
     CollisionFrame Right;
 
+    public List<CollisionFrame> CollisionFrames = new List<CollisionFrame>();
+
     public Block(Vec2 position, int width, int height, int hitPoints) : base(width, height, false)
     {
         this._hitPoints = hitPoints;
@@ -23,9 +26,9 @@ class Block : EasyDraw
         hitPointNumber.TextAlign(CenterMode.Center, CenterMode.Center);
         hitPointNumber.TextSize(30);
 
-        SetOrigin(0f, 0f);
         Draw(0, 100, 0);
         DrawHitPoints();
+        AddCollisionFrame();
     }
 
     void Update()
@@ -52,5 +55,24 @@ class Block : EasyDraw
     public void Kill()
     {
         Destroy();
+    }
+
+    public void AddCollisionFrame()
+    {
+        Top = new CollisionFrame(new Vec2(0, 0), new Vec2(width, 0), 0xff00ff00, 3);
+        Bottom = new CollisionFrame(new Vec2(0, height), new Vec2(width, height), 0xff00ff00, 3);
+        Left = new CollisionFrame(new Vec2(0, 0), new Vec2(0, height), 0xff00ff00, 3);
+        Right = new CollisionFrame(new Vec2(width, 0), new Vec2(width, height), 0xff00ff00, 3);
+
+        AddChild(Top);
+        AddChild(Bottom);
+        AddChild(Left);
+        AddChild(Right);
+
+        CollisionFrames.Add(Top);
+        CollisionFrames.Add(Bottom);
+        CollisionFrames.Add(Left);
+        CollisionFrames.Add(Right);
+
     }
 }
