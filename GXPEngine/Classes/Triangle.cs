@@ -51,7 +51,7 @@ class Triangle : EasyDraw
         hitPointNumber.Fill(Color.Yellow);
         hitPointNumber.TextAlign(CenterMode.Center, CenterMode.Center);
         hitPointNumber.TextSize(30);
-        hitPointNumber.Text(" " + _hitPoints, width / 2f - offSetX, height / 2f + offSetY);
+        hitPointNumber.Text(" " + _hitPoints, width / 2f - offSetX, height / 2 - 5 + offSetY);
         AddChild(hitPointNumber);
     }
 

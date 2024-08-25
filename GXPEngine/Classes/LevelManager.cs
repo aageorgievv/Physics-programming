@@ -22,15 +22,21 @@ class LevelManager : GameObject
     private float _topYBoundary = 0;
     private float _bottomYBoundary = 0;
 
-    private int spacingX = 100;
-    private int spacingY = 90;
+    private int startTriangleX = 22;
+    private int startTriangleY = 100;
+    private int startBlockX = 10;
+    private int startBlockY = 100;
+    private int spacingX = 150;
+    private int spacingY = 210;
     private int border = 50;
-    private int blockWidth = 50;
-    private int blockHeight = 50;
-    private int blockHealth = 50;
+    private int blockSize = 50;
+    private int triangleSize = 75;
+    private int brickHealth = 50;
     private int playerSpeed = 7;
     private int playerRadious = 10;
     private int ballAmount = 20;
+
+    private bool spawnedTriangle = false;
 
 
     private List<Block> blocks = new List<Block>();
@@ -70,7 +76,8 @@ class LevelManager : GameObject
 
             foreach(Block block in blocks)
             {
-                block.y += spacingY;
+                block.y += spacingY / 2;
+
             }
 
             foreach(Block block in blocks)
@@ -82,12 +89,41 @@ class LevelManager : GameObject
                 }
             }
 
-            for(int x = 0; x < 10; x++)
+            foreach(Triangle triangle in triangles)
             {
-                block = new Block(new Vec2(35 + spacingX * x, 20 + spacingY * y), blockWidth, blockHeight, blockHealth);
-                blocks.Add(block);
-                game.AddChild(block);
+                triangle.y += spacingY / 2;
             }
+
+            foreach(Triangle triangle in triangles)
+            {
+                if(triangle.y + triangle.height >= bottomLine.start.y)
+                {
+                    // game over
+                    Console.WriteLine($"Game Over");
+                }
+            }
+
+            if (!spawnedTriangle)
+            {
+                for (int x = 0; x < 10; x++)
+                {
+                    triangle = new Triangle(new Vec2(20 + spacingX * x, 20 + spacingY * y), triangleSize, triangleSize, brickHealth);
+                    triangles.Add(triangle);
+                    game.AddChild(triangle);
+                    spawnedTriangle = true;
+                }
+            }
+            else
+            {
+                for(int x = 0; x < 10; x++)
+                {
+                    block = new Block(new Vec2(35 + spacingX * x, 30 + spacingY * y), blockSize, blockSize, brickHealth);
+                    blocks.Add(block);
+                    game.AddChild(block);
+                    spawnedTriangle = false;
+                }
+            }
+
 
             SpawnBalls();
         }
@@ -113,19 +149,31 @@ class LevelManager : GameObject
 
     public void SpawnBlocksAndTriangles()
     {
-        //triangle = new Triangle(new Vec2(400 + spacingX * x, 200 + spacingY * y), 100, 100, 50);
-        //triangles.Add(triangle);
-        //game.AddChild(triangle);
+        /*        triangle = new Triangle(new Vec2(400 + spacingX * x, 200 + spacingY * y), 100, 100, 50);
+                triangles.Add(triangle);
+                game.AddChild(triangle);*/
 
-        for(int y = 0; y < 4; y++)
+
+        /*        CollisionFrame frame = new CollisionFrame(200, 300, 600, 300);
+                AddChild(frame);
+                Lines.Add(frame);*/
+
+        for(int y = 0; y < 1; y++)
         {
             for(int x = 0; x < 10; x++)
             {
-                //block = new Block(new Vec2(35 + spacingX * x, 20 + spacingY * y), blockWidth, blockHeight, blockHealth);
-                //blocks.Add(block);
-                //game.AddChild(block);
+                block = new Block(new Vec2(35 + spacingX * x, 20 + spacingY * y), blockSize, blockSize, brickHealth);
+                blocks.Add(block);
+                game.AddChild(block);
+            }
+        }
 
-                triangle = new Triangle(new Vec2(35 + spacingX * x, 20 + spacingY * y), 50, 50, 25);
+        for(int y = 0; y < 1; y++)
+        {
+            for(int x = 0; x < 10; x++)
+            {
+
+                triangle = new Triangle(new Vec2(startTriangleX + spacingX * x, startTriangleY + spacingY * y), triangleSize, triangleSize, brickHealth);
                 triangles.Add(triangle);
                 game.AddChild(triangle);
             }
@@ -136,8 +184,6 @@ class LevelManager : GameObject
     {
         return blocks.Count;
     }
-
-
 
     public Block GetBlock(int index)
     {
