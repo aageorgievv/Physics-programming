@@ -35,41 +35,51 @@ public class MyGame : Game
     static void DoTests()
     {
         Vec2 v1 = new Vec2(3, 4);
-        float len = v1.Length(); // should be 5
+        float len = v1.Length();
         Console.WriteLine("Length ok? {0} (value={1}, should be 5)", len == 5, len);
 
-        Vec2 v2 = new Vec2(3, 4);
-        v2.Normalize();
-        Console.WriteLine("Normalize ok?  Result:{0} ", v2);
+        Vec2 vector = new Vec2(3, 4);
+        vector.Normalize();
+        bool isNormalize = vector.x == 0.6f && vector.y == 0.8f;
+        Console.WriteLine("Normalize ok? {0} (value={1}, should be (0.6,0.8)", isNormalize, vector);
 
         Vec2 v3 = new Vec2(3, 4);
-        Vec2 len3 = v3.Normalized();
-        Console.WriteLine("Normalized ok? Result:{0}", len3);
+        Vec2 len2 = v3.Normalized();
+        bool isNormalized = vector.x == 0.6f && vector.y == 0.8f;
+        Console.WriteLine("Normalized ok? {0} (value={1}, should be (0.6,0.8)", isNormalized, len2);
+
+        Vec2 ball = new Vec2(3, 4);
+        ball.SetXY(4, 6);
+        bool isXY = ball.x == 4 && ball.y == 6;
+        Console.WriteLine("SetXY ok? {0} (value={1}, should be (4,6)", isXY, ball);
 
         Vec2 left = new Vec2(3, 4);
         Vec2 right = new Vec2(7, 6);
         Vec2 outCome = left + right;
-        Console.WriteLine("Addition ok? Result:{0}", outCome);
+        bool summ = outCome.x == 10 && outCome.y == 10;
+        Console.WriteLine("Addition ok? {0} (value={1}, should be (10,10)", summ, outCome);
 
-        Vec2 xy = new Vec2(3, 4);
-        xy.SetXY(6, 2);
-        Console.WriteLine($"Position: {xy}");
-
-        Vec2 left2 = new Vec2(5, 6);
-        Vec2 right2 = new Vec2(2, 2);
+        Vec2 left2 = new Vec2(13, 14);
+        Vec2 right2 = new Vec2(3, 4);
         Vec2 outCome2 = left2 - right2;
-        Console.WriteLine("Subtraction ok? Result:{0}", outCome2);
+        bool summ2 = outCome2.x == 10 && outCome2.y == 10;
+        Console.WriteLine("Subtraction ok? {0} (value={1}, should be (10,10)", summ2, outCome2);
 
-        Vec2 left3 = new Vec2(3, 4);
-        float number = 5;
-        Vec2 outCome3 = left3 * number;
-        Console.WriteLine("Addition ok? Result:{0}", outCome3);
+        Vec2 v4 = new Vec2(4, 8);
+        Vec2 outCome3 = v4 * 2;
+        bool summ3 = outCome3.x == 8 && outCome3.y == 16;
+        Console.WriteLine("Multiplication ok? {0} (value={1}, should be (8,16)", summ3, outCome3);
 
-        float degrees = Vec2.RadToDeg(1.75f * Mathf.PI);
-        Console.WriteLine("Rad result: " + degrees);
+        Vec2 v5 = new Vec2(4, 8);
+        Vec2 outCome4 = v5 / 2;
+        bool summ4 = outCome4.x == 2 && outCome4.y == 4;
+        Console.WriteLine("Division ok? {0} (value={1}, should be (2,14)", summ4, outCome4);
 
-        float piFraction = Vec2.DegToRad(225) / Mathf.PI;
-        Console.WriteLine("PI " + piFraction);
+        float degrees = Vec2.RadToDeg(1.5708f);
+        Console.WriteLine("RadToDeg ok? {0} (value={1}, should be (90)", (int)degrees == 90, degrees);
+
+        float radians = Vec2.DegToRad(90);
+        Console.WriteLine("DegToRad ok? (value={0}, should be (1.570796)", radians);
 
         Vec2 degUnit = Vec2.GetUnitVectorDeg(45);
         Console.WriteLine("GetUnitVectorDeg " + degUnit);
