@@ -83,32 +83,27 @@ public struct Vec2
         return degree * (Mathf.PI / 180.0f);
     }
 
-    public static Vec2 GetUnitVectorDeg(float degree) 
+    public void RoundSmallValues(float threshold = 1e-6f)// +
     {
-        float radian = DegToRad(degree);
-        return GetUnitVectorRad(radian);
+        if(Math.Abs(x) < threshold) x = 0;
+        if(Math.Abs(y) < threshold) y = 0;
     }
 
-    public static Vec2 GetUnitVectorRad(float radian) 
+    public static Vec2 GetUnitVectorRad(float radian) //+
     {
         Vec2 vector = new Vec2();
         vector.SetXY(Mathf.Cos(radian), Mathf.Sin(radian));
         return vector;
     }
-    
 
-    public void SetAngleDegrees(float angleDeg) 
+    public static Vec2 GetUnitVectorDeg(float degree) //+
     {
-        Vec2 vector = new Vec2();
-        vector = GetUnitVectorDeg(angleDeg);
-        float length = Length();
-        vector *= length;
-        x = vector.x;
-        y = vector.y;
+        float radian = DegToRad(degree);
+        return GetUnitVectorRad(radian);
     }
-    public void SetAngleRadians(float angleRad) 
+
+    public void SetAngleRadians(float angleRad) //+
     {
-        //Vec2 vector = new Vec2();
         Vec2 vector = GetUnitVectorRad(angleRad);
         float length = Length();
         vector *= length;
@@ -116,10 +111,20 @@ public struct Vec2
         y = vector.y;
     }
 
-    public float GetAngleDegrees() 
+    public void SetAngleDegrees(float angleDeg)//+
+    {
+        Vec2 vector = GetUnitVectorDeg(angleDeg);
+        float length = Length();
+        vector *= length;
+        x = vector.x;
+        y = vector.y;
+    }
+
+    public float GetAngleDegrees()  //+
     {
         return RadToDeg(Mathf.Atan2(y, x));
     }
+
     public float GetAngleRadians() 
     {
         return Mathf.Atan2(y, x);

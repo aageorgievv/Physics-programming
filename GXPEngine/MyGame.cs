@@ -1,6 +1,7 @@
 using GXPEngine;
 using System;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using GXPEngine.Core;
 
 public class MyGame : Game
@@ -73,33 +74,47 @@ public class MyGame : Game
         Vec2 v5 = new Vec2(4, 8);
         Vec2 outCome4 = v5 / 2;
         bool summ4 = outCome4.x == 2 && outCome4.y == 4;
-        Console.WriteLine("Division ok? {0} (value={1}, should be (2,14)", summ4, outCome4);
+        Console.WriteLine("Division ok? {0} (value={1}, should be (2,4)", summ4, outCome4);
 
         float degrees = Vec2.RadToDeg(1.5708f);
         Console.WriteLine("RadToDeg ok? {0} (value={1}, should be (90)", (int)degrees == 90, degrees);
 
         float radians = Vec2.DegToRad(90);
-        Console.WriteLine("DegToRad ok? (value={0}, should be (1.570796)", radians);
+        bool isRadCorrect = Math.Abs(radians - 1.570796) < 1e-6f;
+        Console.WriteLine("DegToRad ok? {0} (value={1}, should be (1.570796)", isRadCorrect, radians);
 
-        Vec2 degUnit = Vec2.GetUnitVectorDeg(45);
-        Console.WriteLine("GetUnitVectorDeg " + degUnit);
+        Vec2 getUnitVectorRad = Vec2.GetUnitVectorRad(Mathf.PI);
+        getUnitVectorRad.RoundSmallValues();
+        bool isUnitVectorRad1 = getUnitVectorRad.x == -1 && getUnitVectorRad.y == 0;
+        Console.WriteLine("GetUnitVectorRad1 ok? {0} (value={1}, should be (-1,0))", isUnitVectorRad1, getUnitVectorRad);
 
-        Vec2 angleDegrees = new Vec2(1, 0);
-        angleDegrees.SetAngleDegrees(45f);
-        Console.WriteLine("SetAngleDegrees " + angleDegrees);
+        Vec2 getUnitVectorDeg = Vec2.GetUnitVectorDeg(0); 
+        getUnitVectorDeg.RoundSmallValues();
+        bool isUnitVectorDeg = getUnitVectorDeg.x == 1 && getUnitVectorDeg.y == 0;
+        Console.WriteLine("-getUnitVectorDeg1 ok? {0} (value={1}, should be (1,0))", isUnitVectorDeg, getUnitVectorDeg);
 
-        Vec2 angleRadians = new Vec2(1, 0);
-        angleRadians.SetAngleRadians(0.785398163f);
-        Console.WriteLine("SetAngleRadians " + angleRadians);
+        Vec2 angleRadians = new Vec2(3, 4);
+        angleRadians.SetAngleRadians(Mathf.PI);
+        angleRadians.RoundSmallValues();
+        bool isAngleRadians = angleRadians.x == -5 && angleRadians.y == 0;
+        Console.WriteLine("SetAngleRadians ok? {0} (value={1}, should be (-5,0))", isAngleRadians, angleRadians);
 
-        float deg = angleDegrees.GetAngleDegrees();
-        Console.WriteLine("GetAngleDegrees " + deg);
+        Vec2 angleDegrees = new Vec2(3, 4);
+        angleDegrees.SetAngleDegrees(90);
+        angleDegrees.RoundSmallValues();
+        bool isAngleDegrees = angleDegrees.x == 0 && angleDegrees.y == 5;
+        Console.WriteLine("-SetAngleDegrees ok? {0} (value={1}, should be (0,5))", isAngleDegrees, angleDegrees)
+            ;
 
-        float rad = angleRadians.GetAngleRadians();
-        Console.WriteLine("GetAngleRadians " + rad);
+        Vec2 someVector = new Vec2(1, 1); // 45 degrees expected
+        float someAngleDegrees2 = someVector.GetAngleDegrees();
+        bool isAngleDegrees2 = someAngleDegrees2 == 45;
+        Console.WriteLine("GetAngleDegrees ok? {0} (value={1}, should be 45)", isAngleDegrees2, someAngleDegrees2);
 
-        Vec2 radUnit = Vec2.GetUnitVectorRad(0.707f);
-        Console.WriteLine("GetUnitVectorRad " + radUnit);
+        Vec2 someVector2 = new Vec2(1, 1); // 45 degrees expected
+        float someAngleRadians2 = someVector2.GetAngleRadians();
+        bool isAngleRadians2 = someAngleRadians2 == 0.7853982f;
+        Console.WriteLine("GetAngleRadians ok? {0} (value={1}, should be 0.7853982)", isAngleRadians2, someAngleRadians2);
 
         Vec2 rotateDegrees = new Vec2(1, 0);
         rotateDegrees.RotateDegrees(45);
