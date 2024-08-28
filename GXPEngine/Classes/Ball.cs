@@ -162,8 +162,9 @@ class Ball : EasyDraw
         float ballDistance = Mathf.Abs(startToBall.Dot(lineNormal));
         Vec2 startToBallProjection = startToBall.Project(lineVector);
 
-        /*Gizmos.DrawLine(start.x, start.y, start.x + startToBall.x, start.y + startToBall.y);
-        Gizmos.DrawLine(start.x, start.y, start.x + startToBallProjection.x, start.y + startToBallProjection.y, null, 0xFFFF0000);*/
+
+        Gizmos.DrawLine(start.x, start.y, start.x + startToBall.x, start.y + startToBall.y);
+        Gizmos.DrawLine(start.x, start.y, start.x + startToBallProjection.x, start.y + startToBallProjection.y, null, 0xFFFF0000);
 
         Vec2 oldDistance = start + startToBallProjection - _oldPosition;
         float a = Mathf.Abs(oldDistance.Dot(lineNormal)) - _radius;

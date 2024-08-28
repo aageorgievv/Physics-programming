@@ -53,12 +53,12 @@ class LevelManager : GameObject
         this.game = game;
         game.AddChild(this);
 
-        CreateABoundary(LineSide.Top);
+/*        CreateABoundary(LineSide.Top);
         CreateABoundary(LineSide.Bottom);
         CreateABoundary(LineSide.Left);
         CreateABoundary(LineSide.Right);
         CreateABoundary(LineSide.BottomLeft);
-        CreateABoundary(LineSide.BottomRight);
+        CreateABoundary(LineSide.BottomRight);*/
     }
 
     void Update()
@@ -157,17 +157,17 @@ class LevelManager : GameObject
                 game.AddChild(triangle);*/
 
 
-        /*        CollisionFrame frame = new CollisionFrame(200, 300, 600, 300);
-                AddChild(frame);
-                Lines.Add(frame);*/
+        CollisionFrame frame = new CollisionFrame(200, 300, 600, 300);
+        AddChild(frame);
+        Lines.Add(frame);
 
         for(int y = 0; y < 1; y++)
         {
             for(int x = 0; x < 10; x++)
             {
-                block = new Block(new Vec2(35 + spacingX * x, 20 + spacingY * y), blockSize, blockSize, brickHealth);
+/*                block = new Block(new Vec2(35 + spacingX * x, 20 + spacingY * y), blockSize, blockSize, brickHealth);
                 blocks.Add(block);
-                game.AddChild(block);
+                game.AddChild(block);*/
             }
         }
 
@@ -176,9 +176,9 @@ class LevelManager : GameObject
             for(int x = 0; x < 10; x++)
             {
 
-                triangle = new Triangle(new Vec2(startTriangleX + spacingX * x, startTriangleY + spacingY * y), triangleSize, triangleSize, brickHealth);
+/*                triangle = new Triangle(new Vec2(startTriangleX + spacingX * x, startTriangleY + spacingY * y), triangleSize, triangleSize, brickHealth);
                 triangles.Add(triangle);
-                game.AddChild(triangle);
+                game.AddChild(triangle);*/
             }
         }
     }

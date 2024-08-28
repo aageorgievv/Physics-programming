@@ -118,31 +118,56 @@ public class MyGame : Game
 
         Vec2 rotateDegrees = new Vec2(1, 0);
         rotateDegrees.RotateDegrees(45);
-        Console.WriteLine("rotateDegrees ok? " + rotateDegrees);
+        Console.WriteLine("RotateDegrees ok?  (value={0}, should be (0.7071068, 0.7071068)", rotateDegrees);
 
         Vec2 rotateRadians = new Vec2(1, 0);
-        rotateRadians.RotateRadians(0.785398f);
-        Console.WriteLine("rotateRadians ok? " + rotateRadians);
+        rotateRadians.RotateRadians(Mathf.PI); //rotate by 180 degrees
+        rotateRadians.RoundSmallValues();
+        bool isRotateRad = rotateRadians.x == -1 && rotateRadians.y == 0;
+        Console.WriteLine("RotateRadians ok? {0}  (value={1}, should be (-1,0)", isRotateRad, rotateRadians);
+
+        Vec2 randomVec = Vec2.RandomUnitVector();
+        float length = randomVec.Length();
+        bool isRandomUnitVector = length == 1;
+        Console.WriteLine("RandomUnitVector ok? {0} (value={1}, should be 1", isRandomUnitVector, length);
+
+        Vec2 vec2 = new Vec2(3, 4);
+        vec2.RotateAroundDegrees(new Vec2(1, 1), 90);
+        bool isRotateAroundDeg = vec2.x == -2 && vec2.y == 3;
+        Console.WriteLine("RotateAroundDegrees ok? {0} (value={1}, should be (-2, 3)", isRotateAroundDeg, vec2);
+
+        Vec2 vec3 = new Vec2(3, 4);
+        vec3.RotateAroundRadians(new Vec2(1, 1), Mathf.PI / 2);
+        bool isRotateAroundRad = vec2.x == -2 && vec2.y == 3;
+        Console.WriteLine("RotateAroundRadians ok? {0} (value={1}, should be (-2, 3)", isRotateAroundRad, vec3);
 
         Vec2 start = new Vec2(0, 0);
         Vec2 end = new Vec2(1, 1);
         Vec2 line = end - start;
         Vec2 normal = line.Normal();
-        Console.WriteLine($"The normal of {line} is {normal}");
+        float lengthNormal = normal.Length();
+        bool normalLength = lengthNormal == 1;
+        Console.WriteLine("Normal ok? {0} (value={1}, should be 1", normalLength, lengthNormal);
 
-        Vec2 first = new Vec2(0.707f, 0.707f);
-        Vec2 second = new Vec2(1, 0);
-        float dotProduct = first.Dot(second);
-        Console.WriteLine($"The dot product of {first} on {second} is {dotProduct}");
+        Vec2 first = new Vec2(1, 2);
+        Vec2 second = new Vec2(3, 4);
+        float dotProduct = first.Dot(second.Normalized());
+        float secondLenght = second.Length();
+        bool isDot = dotProduct == 2.2;
+        Console.WriteLine("Dot ok? {0} (value={1}, secondLenght:{2} should be 2.2", isDot, dotProduct, secondLenght);
+
+        //-----------------------
+
+        Vec2 A = new Vec2(1, 2);
+        Vec2 B = new Vec2(3, 4);
+        Vec2 projected = A.Project(B);
+        Console.WriteLine("Project ok? {0} (value={1}, should be (1.32f, 1.76)", isDot, projected);
 
         Vec2 vectorToReflect = new Vec2(1, 1);
         Vec2 floorNormal = new Vec2(0, 1);
         Vec2 reflectedVector = vectorToReflect;
         reflectedVector.Reflect(floorNormal, 1f);
         Console.WriteLine($"Reflecting {vectorToReflect} on normal {floorNormal} is {reflectedVector}");
-
-        Vec2 randomUnitVector = Vec2.RandomUnitVector();
-        Console.WriteLine($"Is random unit vector {randomUnitVector} a unit vector? - {randomUnitVector.Length() == 1f}");
     }
 
     static void Main()

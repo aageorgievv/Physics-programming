@@ -125,36 +125,36 @@ public struct Vec2
         return RadToDeg(Mathf.Atan2(y, x));
     }
 
-    public float GetAngleRadians() 
+    public float GetAngleRadians() //+
     {
         return Mathf.Atan2(y, x);
     }
 
-    public void RotateDegrees(float angleDeg) 
+    public void RotateDegrees(float angleDeg) //+
     {
-        Vec2 v = new Vec2();
-        v = Vec2.GetUnitVectorDeg(angleDeg);
-        v.SetXY(x * v.x - y * v.y, x * v.y + y * v.x);
-        x = v.x;
-        y = v.y;
+        float radians = DegToRad(angleDeg);
+        float newX = x * Mathf.Cos(radians) - y * Mathf.Sin(radians);
+        float newY = x * Mathf.Sin(radians) + y * Mathf.Cos(radians);
+
+        x = newX;
+        y = newY;
     }
-    public void RotateRadians(float angleRad) 
+    public void RotateRadians(float angleRad) //+
     {
-        Vec2 v = new Vec2();
-        v = Vec2.GetUnitVectorRad(angleRad);
-        v.SetXY(x * v.x - y * v.y, x * v.y + y * v.x);
-        x = v.x;
-        y = v.y;
+        float newX = x * Mathf.Cos(angleRad) - y * Mathf.Sin(angleRad);
+        float newY = x * Mathf.Sin(angleRad) + y * Mathf.Cos(angleRad);
+
+        x = newX; 
+        y = newY;
     }
 
-    public static Vec2 RandomUnitVector()
+    public static Vec2 RandomUnitVector() //+
     {
         float randomAngle = Utils.Random(0, 360);
-        Console.WriteLine(randomAngle);
         return GetUnitVectorDeg(randomAngle);
     }
 
-    public void RotateAroundDegrees(Vec2 rotationPoint, float angleDeg)
+    public void RotateAroundDegrees(Vec2 rotationPoint, float angleDeg) //++
     {
         x -= rotationPoint.x;
         y -= rotationPoint.y;
@@ -163,7 +163,7 @@ public struct Vec2
         y += rotationPoint.y;
     }
 
-    public void RotateAroundRadians(Vec2 rotationPoint, float angleRad)
+    public void RotateAroundRadians(Vec2 rotationPoint, float angleRad) //++
     {
         x -= rotationPoint.x;
         y -= rotationPoint.y;
@@ -172,14 +172,14 @@ public struct Vec2
         y += rotationPoint.y;
     }
 
-    public Vec2 Normal()
+    public Vec2 Normal() //+
     {
         Vec2 v = new Vec2(-y, x);
         v.Normalize();
         return v;
     }
 
-    public float Dot(Vec2 vector)
+    public float Dot(Vec2 vector) //+
     {
         return (x * vector.x + y * vector.y);
     }
@@ -187,7 +187,6 @@ public struct Vec2
     public Vec2 Project(Vec2 B)
     {
         return this.Dot(B) / B.Dot(B) * B;
-
     }
      
     public void Reflect(Vec2 normal, float bounciness)
