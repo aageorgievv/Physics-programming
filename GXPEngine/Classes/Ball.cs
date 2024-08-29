@@ -10,7 +10,7 @@ class Ball : EasyDraw
 
     public bool hasShot = false;
 
-    public int _radius = 10;
+    public int _radius;
 
     private float _speed = 5;
     private float _bounciness = 1f;
@@ -46,6 +46,7 @@ class Ball : EasyDraw
 
     void Update()
     {
+        AimAndRotate();
         Move();
         //DrawBounds();
     }
@@ -75,8 +76,6 @@ class Ball : EasyDraw
         Stroke(red, green, blue);
         ShapeAlign(CenterMode.Min, CenterMode.Min);
         Ellipse(0, 0, width - 1, height - 1);
-
-        //_texture = new Texture2D("Assets/circle.png");
     }
 
     void DrawBounds()
@@ -86,7 +85,6 @@ class Ball : EasyDraw
         Gizmos.DrawLine(bounds[1].x, bounds[1].y, bounds[2].x, bounds[2].y);
         Gizmos.DrawLine(bounds[2].x, bounds[2].y, bounds[3].x, bounds[3].y);
         Gizmos.DrawLine(bounds[3].x, bounds[3].y, bounds[0].x, bounds[0].y);
-        Gizmos.DrawCross(x, y, 50, color: 0xffff00ff);
     }
 
     void CheckBlockOverlaps()
@@ -99,6 +97,23 @@ class Ball : EasyDraw
             {
                 CheckBrickCollisions(frame);
             }
+        }
+    }
+
+    void AimAndRotate()
+    {
+        if(hasShot == false)
+        {
+            Vector2 ballTransformed = this.TransformPoint(this.x, this.y);
+            Vec2 ballPosition = new Vec2(ballTransformed.x, ballTransformed.y);
+            Vec2 mousePosition = new Vec2(Input.mouseX, Input.mouseY);
+            Gizmos.DrawLine(ballPosition.x / 2, ballPosition.y / 2, mousePosition.x, mousePosition.y);
+            Console.WriteLine("Ball position: {0} ", _position);
+            Console.WriteLine("ballTransformed: {0} ", ballTransformed);
+
+            Vec2 ballToMouse = new Vec2(mousePosition.x - ballPosition.x, mousePosition.y - ballPosition.y);
+            float angle = ballToMouse.GetAngleDegrees();
+            ball.rotation = angle;
         }
     }
 
@@ -115,33 +130,6 @@ class Ball : EasyDraw
         }
     }
 
-/*    bool AreBlocksOverlapping(Block block)
-    {
-        // Basic AABB (Axis-Aligned Bounding Box) collision detection. The method calculates the distance between the centers of the ball and the block along the x and y axes.
-        return Mathf.Abs((block.x + block.width / 2f) - (_position.x + _radius)) < (_radius + block.width / 2f) &&
-               Mathf.Abs((block.y + block.height / 2f) - (_position.y + _radius)) < (_radius + block.height / 2f);
-    }
-
-    void ResolveBlockCollision(Block block)
-    {
-        // Calculate overlap in both axes
-        float overlapX = (_radius + block.width / 2f) - Mathf.Abs((block.x + block.width / 2f) - (_position.x + _radius));
-        float overlapY = (_radius + block.height / 2f) - Mathf.Abs((block.y + block.height / 2f) - (_position.y + _radius));
-
-        // Adjust position to resolve collision
-        if(overlapX <= overlapY)
-        {
-            // Reverse velocity along X axis
-            block._hitPoints -= 1;
-            _velocity.x = -_velocity.x;
-        } else
-        {
-            // Reverse velocity along Y axis
-            block._hitPoints -= 1;
-            _velocity.y = -_velocity.y;
-        }
-    }*/
-
     void CheckBrickCollisions(CollisionFrame collisionFrame)
     {
         CircleVSLineCollision(collisionFrame);
@@ -154,7 +142,6 @@ class Ball : EasyDraw
         Vec2 start = new Vec2(startTransformed.x, startTransformed.y);
         Vec2 end = new Vec2(endTransformed.x, endTransformed.y);
 
-
         Vec2 startToBall = new Vec2(x - start.x, y - start.y);
         Vec2 lineVector = end - start;
 
@@ -163,8 +150,8 @@ class Ball : EasyDraw
         Vec2 startToBallProjection = startToBall.Project(lineVector);
 
 
-        Gizmos.DrawLine(start.x, start.y, start.x + startToBall.x, start.y + startToBall.y);
-        Gizmos.DrawLine(start.x, start.y, start.x + startToBallProjection.x, start.y + startToBallProjection.y, null, 0xFFFF0000);
+       /* Gizmos.DrawLine(start.x, start.y, start.x + startToBall.x, start.y + startToBall.y);
+        Gizmos.DrawLine(start.x, start.y, start.x + startToBallProjection.x, start.y + startToBallProjection.y, null, 0xFFFF0000);*/
 
         Vec2 oldDistance = start + startToBallProjection - _oldPosition;
         float a = Mathf.Abs(oldDistance.Dot(lineNormal)) - _radius;
@@ -176,7 +163,7 @@ class Ball : EasyDraw
 
         float dot = startToBall.Dot(lineVector.Normalized());
 
-        if (dot < 0 || dot > lineVector.Length())
+        if(dot < 0 || dot > lineVector.Length())
         {
             return;
         }
