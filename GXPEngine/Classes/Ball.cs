@@ -104,16 +104,12 @@ class Ball : EasyDraw
     {
         if(hasShot == false)
         {
-            Vector2 ballTransformed = this.TransformPoint(this.x, this.y);
-            Vec2 ballPosition = new Vec2(ballTransformed.x, ballTransformed.y);
-            Vec2 mousePosition = new Vec2(Input.mouseX, Input.mouseY);
-            Gizmos.DrawLine(ballPosition.x / 2, ballPosition.y / 2, mousePosition.x, mousePosition.y);
-            Console.WriteLine("Ball position: {0} ", _position);
-            Console.WriteLine("ballTransformed: {0} ", ballTransformed);
+            Gizmos.DrawLine(x, y, Input.mouseX, Input.mouseY);
 
-            Vec2 ballToMouse = new Vec2(mousePosition.x - ballPosition.x, mousePosition.y - ballPosition.y);
+            Vec2 ballToMouse = new Vec2(Input.mouseX - x, Input.mouseY - y);
             float angle = ballToMouse.GetAngleDegrees();
             ball.rotation = angle;
+            Console.WriteLine($"Angle: {angle}");
         }
     }
 
