@@ -3,7 +3,8 @@ using System.Drawing;
 using GXPEngine;
 class Block : EasyDraw
 {
-    public int _hitPoints;
+    public int _hitPoints { get; set; }
+
     private int offSet = 5;
 
     private EasyDraw hitPointNumber;
@@ -26,8 +27,7 @@ class Block : EasyDraw
         hitPointNumber.TextAlign(CenterMode.Center, CenterMode.Center);
         hitPointNumber.TextSize(30);
 
-        Draw(0, 100, 0);
-        DrawHitPoints();
+        Draw(0,100, 0);
         AddCollisionFrame();
     }
 
@@ -46,7 +46,7 @@ class Block : EasyDraw
 
     void DrawHitPoints()
     {
-        hitPointNumber.Clear(Color.Green);
+        hitPointNumber.Clear(Color.Empty);
         hitPointNumber.Fill(Color.Yellow);
         hitPointNumber.Text(" " + _hitPoints , width / 2f - offSet, height / 2f + offSet);
         AddChild(hitPointNumber);

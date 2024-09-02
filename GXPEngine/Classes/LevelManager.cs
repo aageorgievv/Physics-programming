@@ -34,7 +34,7 @@ class LevelManager : GameObject
     private int triangleSize = 75;
     private int brickHealth = 50;
     private int playerSpeed = 7;
-    private int playerRadious = 20;
+    private int playerRadius = 15;
     private int ballAmount = 20;
 
     private bool spawnedTriangle = false;
@@ -133,7 +133,7 @@ class LevelManager : GameObject
     {
         for(int i = 0; i < 1 /*ballAmount*/; i++)
         {
-            ball = new Ball(this, new Vec2(game.width / 2f, 500), playerRadious, playerSpeed);
+            ball = new Ball(this, new Vec2(game.width / 2f, 500), playerRadius, playerSpeed);
             ball.OnDestroyed += HandleBallDestroyed;
             game.AddChild(ball);
             balls.Add(ball);

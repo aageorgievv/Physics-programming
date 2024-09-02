@@ -6,6 +6,7 @@ using GXPEngine.Core;
 
 class Ball : EasyDraw
 {
+
     public event System.Action<Ball> OnDestroyed;
 
     public bool hasShot = false;
@@ -87,19 +88,6 @@ class Ball : EasyDraw
         Gizmos.DrawLine(bounds[3].x, bounds[3].y, bounds[0].x, bounds[0].y);
     }
 
-    void CheckBlockOverlaps()
-    {
-        for(int i = 0; i < level.GetNumberOfBlocks(); i++)
-        {
-            Block block = level.GetBlock(i);
-
-            foreach(CollisionFrame frame in block.CollisionFrames)
-            {
-                CheckBrickCollisions(frame);
-            }
-        }
-    }
-
     void AimAndRotate()
     {
         if(hasShot == false)
@@ -113,6 +101,19 @@ class Ball : EasyDraw
         }
     }
 
+    void CheckBlockOverlaps()
+    {
+        for(int i = 0; i < level.GetNumberOfBlocks(); i++)
+        {
+            Block block = level.GetBlock(i);
+
+            foreach(CollisionFrame frame in block.CollisionFrames)
+            {
+                CheckBrickCollisions(frame, block);
+            }
+        }
+    }
+
     void CheckTriangleOverlaps()
     {
         for(int i = 0; i < level.GetNumberOfTriangles(); i++)
@@ -121,17 +122,26 @@ class Ball : EasyDraw
 
             foreach(CollisionFrame frame in triangle.CollisionFrames)
             {
-                CheckBrickCollisions(frame);
+                CheckBrickCollisions(frame, triangle);
             }
         }
     }
 
-    void CheckBrickCollisions(CollisionFrame collisionFrame)
+    void CheckBoundaryCollisions()
     {
-        CircleVSLineCollision(collisionFrame);
+
+        foreach(LineSegment line in level.Lines)
+        {
+            CircleVSLineCollision(line);
+        }
     }
 
-    void CircleVSLineCollision(LineSegment line)
+    void CheckBrickCollisions(CollisionFrame collisionFrame, Object owner)
+    {
+        CircleVSLineCollision(collisionFrame, owner);
+    }
+
+    void CircleVSLineCollision(LineSegment line, Object owner)
     {
         Vector2 startTransformed = line.TransformPoint(line.start.x, line.start.y);
         Vector2 endTransformed = line.TransformPoint(line.end.x, line.end.y);
@@ -146,8 +156,8 @@ class Ball : EasyDraw
         Vec2 startToBallProjection = startToBall.Project(lineVector);
 
 
-       /* Gizmos.DrawLine(start.x, start.y, start.x + startToBall.x, start.y + startToBall.y);
-        Gizmos.DrawLine(start.x, start.y, start.x + startToBallProjection.x, start.y + startToBallProjection.y, null, 0xFFFF0000);*/
+        /* Gizmos.DrawLine(start.x, start.y, start.x + startToBall.x, start.y + startToBall.y);
+         Gizmos.DrawLine(start.x, start.y, start.x + startToBallProjection.x, start.y + startToBallProjection.y, null, 0xFFFF0000);*/
 
         Vec2 oldDistance = start + startToBallProjection - _oldPosition;
         float a = Mathf.Abs(oldDistance.Dot(lineNormal)) - _radius;
@@ -170,22 +180,32 @@ class Ball : EasyDraw
         {
             _position = pointOfImpact;
             _velocity.Reflect(lineNormal, 1);
+
+            if(owner is Block block)
+            {
+                block._hitPoints--;
+
+                if(block._hitPoints <= 0)
+                {
+                    game.RemoveChild(block);
+                }
+            }
+
+            if(owner is Triangle triangle)
+            {
+                triangle._hitPoints--; 
+
+                if(triangle._hitPoints <= 0)
+                {
+                    game.RemoveChild(triangle); 
+                }
+            }
+
             if(line.side == LineSide.Bottom)
             {
                 LateDestroy();
                 OnDestroyed?.Invoke(this);
             }
-        }
-    }
-
-
-
-    void CheckBoundaryCollisions()
-    {
-
-        foreach(LineSegment line in level.Lines)
-        {
-            CircleVSLineCollision(line);
         }
     }
 }

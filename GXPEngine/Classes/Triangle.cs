@@ -4,7 +4,8 @@ using System.Drawing;
 using GXPEngine;
 class Triangle : EasyDraw
 {
-    private int _hitPoints;
+    public int _hitPoints { get; set; }
+
     private int offSetX = 5;
     private int offSetY = 25;
 
@@ -26,33 +27,35 @@ class Triangle : EasyDraw
         x = _position.x;
         y = _position.y;
 
+        hitPointNumber = new EasyDraw(width, height);
+        hitPointNumber.TextAlign(CenterMode.Center, CenterMode.Center);
+        hitPointNumber.TextSize(30);
 
-        Draw(150, 100, 100);
+        Draw(100, 100 ,100);
         AddCollisionFrame();
-        DrawHitPoints();
+        
     }
 
     void Update()
     {
-
+        DrawHitPoints();
     }
 
     void Draw(byte red, byte green, byte blue)
     {
         Fill(red, green, blue);
         Stroke(red, green, blue);
-        ShapeAlign(CenterMode.Min, CenterMode.Min);
         Triangle(width / 2f, 0, width, height, 0, height);
     }
 
     void DrawHitPoints()
     {
-        hitPointNumber = new EasyDraw(width, height);
+        hitPointNumber.Clear(Color.Empty);
         hitPointNumber.Fill(Color.Yellow);
         hitPointNumber.TextAlign(CenterMode.Center, CenterMode.Center);
-        hitPointNumber.TextSize(30);
         hitPointNumber.Text(" " + _hitPoints, width / 2f - offSetX, height / 2 - 5 + offSetY);
         AddChild(hitPointNumber);
+
     }
 
     public void AddCollisionFrame()
