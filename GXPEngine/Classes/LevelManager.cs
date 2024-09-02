@@ -5,10 +5,7 @@ using System.Reflection;
 using GXPEngine;
 class LevelManager : GameObject
 {
-    /*    public float LeftXBoundary => _leftXBoundary;
-        public float RightXBoundary => _rightXBoundary;
-        public float TopYBoundary => _topYBoundary;
-        public float BottomYBoundary => _bottomYBoundary;*/
+
     public List<LineSegment> Lines => _lines;
     public List<Block> Blocks => blocks;
 
@@ -16,11 +13,6 @@ class LevelManager : GameObject
     private Ball ball;
     private Block block;
     private Triangle triangle;
-
-    private float _leftXBoundary = 0;
-    private float _rightXBoundary = 0;
-    private float _topYBoundary = 0;
-    private float _bottomYBoundary = 0;
 
     private int startTriangleX = 22;
     private int startTriangleY = 115;
@@ -34,7 +26,7 @@ class LevelManager : GameObject
     private int triangleSize = 75;
     private int brickHealth = 50;
     private int playerSpeed = 7;
-    private int playerRadius = 15;
+    private int playerRadius = 13;
     private int ballAmount = 20;
 
     private bool spawnedTriangle = false;

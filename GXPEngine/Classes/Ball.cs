@@ -132,7 +132,7 @@ class Ball : EasyDraw
 
         foreach(LineSegment line in level.Lines)
         {
-            CircleVSLineCollision(line);
+            CircleVSLineCollision(line, null);
         }
     }
 
