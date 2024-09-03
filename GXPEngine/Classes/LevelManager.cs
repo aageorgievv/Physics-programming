@@ -7,6 +7,7 @@ class LevelManager : GameObject
 {
 
     public List<LineSegment> Lines => _lines;
+    public List<LineCap> Caps => _caps;
     public List<Block> Blocks => blocks;
 
     private MyGame game;
@@ -35,6 +36,7 @@ class LevelManager : GameObject
     private List<Block> blocks = new List<Block>();
     private List<Triangle> triangles = new List<Triangle>();
     private List<LineSegment> _lines = new List<LineSegment>();
+    private List<LineCap> _caps = new List<LineCap>();
     private List<Ball> balls = new List<Ball>();
 
     private LineSegment bottomLine;
@@ -141,19 +143,19 @@ class LevelManager : GameObject
 
     public void SpawnBlocksAndTriangles()
     {
-        /*        block = new Block(new Vec2(300, 400), blockSize, blockSize, brickHealth);
-                blocks.Add(block);
-                game.AddChild(block);*/
+/*        block = new Block(new Vec2(300, 400), blockSize, blockSize, brickHealth);
+        blocks.Add(block);
+        game.AddChild(block);
 
-        /*        triangle = new Triangle(new Vec2(400 + spacingX * x, 200 + spacingY * y), 100, 100, 50);
-                triangles.Add(triangle);
-                game.AddChild(triangle);*/
+        triangle = new Triangle(new Vec2(350 + spacingX * x, 200 + spacingY * y), 100, 100, 50);
+        triangles.Add(triangle);
+        game.AddChild(triangle);
 
 
-        /*        CollisionFrame frame = new CollisionFrame(200, 300, 600, 300);
-                AddChild(frame);
-                Lines.Add(frame);
-        */
+        CollisionFrame frame = new CollisionFrame(200, 300, 600, 300);
+        AddChild(frame);
+        Lines.Add(frame);*/
+
         for(int y = 0; y < 1; y++)
         {
             for(int x = 0; x < 10; x++)

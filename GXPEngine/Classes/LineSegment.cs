@@ -1,6 +1,4 @@
-﻿using System;
-using GXPEngine.Core;
-using GXPEngine.OpenGL;
+﻿using GXPEngine.Core;
 
 public enum LineSide
 {

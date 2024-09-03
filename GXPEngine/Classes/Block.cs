@@ -5,6 +5,12 @@ class Block : EasyDraw
 {
     public int _hitPoints { get; set; }
 
+    public Vec2 _position
+    {
+        get { return new Vec2(x, y); }
+        set { x = value.x; y = value.y; }
+    }
+
     private int offSet = 5;
 
     private EasyDraw hitPointNumber;
@@ -14,10 +20,17 @@ class Block : EasyDraw
     CollisionFrame Left;
     CollisionFrame Right;
 
+    public LineCap TopRightCap;
+    public LineCap TopLeftCap;
+    public LineCap BottomRightCap;
+    public LineCap BottomLeftCap;
+
     public List<CollisionFrame> CollisionFrames = new List<CollisionFrame>();
+    public List<LineCap> CollisionCaps = new List<LineCap>();
 
     public Block(Vec2 position, int width, int height, int hitPoints) : base(width, height, false)
     {
+        _position = position;
         this._hitPoints = hitPoints;
 
         x = position.x;
@@ -34,6 +47,7 @@ class Block : EasyDraw
     void Update()
     {
         DrawHitPoints();
+        UpdateLineCaps();
     }
 
     void Draw(byte red, byte green, byte blue)
@@ -74,5 +88,28 @@ class Block : EasyDraw
         CollisionFrames.Add(Left);
         CollisionFrames.Add(Right);
 
+        TopRightCap = new LineCap(new Vec2(_position.x + width, _position.y));
+        TopLeftCap = new LineCap(new Vec2(_position.x, _position.y));
+        BottomRightCap = new LineCap(new Vec2(_position.x + width, _position.y + height));
+        BottomLeftCap = new LineCap(new Vec2(_position.x, _position.y + height));
+
+        AddChild(TopRightCap);
+        AddChild(TopLeftCap);
+        AddChild(BottomRightCap);
+        AddChild(BottomLeftCap);
+
+        CollisionCaps.Add(TopRightCap);
+        CollisionCaps.Add(TopLeftCap);
+        CollisionCaps.Add(BottomRightCap);
+        CollisionCaps.Add(BottomLeftCap);
+
+    }
+
+    void UpdateLineCaps()
+    {
+        TopRightCap._position = new Vec2(_position.x + width, _position.y);
+        TopLeftCap._position = new Vec2(_position.x, _position.y);
+        BottomRightCap._position = new Vec2(_position.x + width, _position.y + height);
+        BottomLeftCap._position = new Vec2(_position.x, _position.y + height);
     }
 }

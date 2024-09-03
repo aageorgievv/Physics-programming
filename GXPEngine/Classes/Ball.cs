@@ -97,7 +97,7 @@ class Ball : EasyDraw
             Vec2 ballToMouse = new Vec2(Input.mouseX - x, Input.mouseY - y);
             float angle = ballToMouse.GetAngleDegrees();
             ball.rotation = angle;
-            Console.WriteLine($"Angle: {angle}");
+            // Console.WriteLine($"Angle: {angle}");
         }
     }
 
@@ -109,7 +109,12 @@ class Ball : EasyDraw
 
             foreach(CollisionFrame frame in block.CollisionFrames)
             {
-                CheckBrickCollisions(frame, block);
+                CircleVSLineCollision(frame, block);
+            }
+
+            foreach(LineCap cap in block.CollisionCaps)
+            {
+                CheckCircleVsCircleCollision(cap, block);
             }
         }
     }
@@ -122,7 +127,12 @@ class Ball : EasyDraw
 
             foreach(CollisionFrame frame in triangle.CollisionFrames)
             {
-                CheckBrickCollisions(frame, triangle);
+                CircleVSLineCollision(frame, triangle);
+            }
+
+            foreach(LineCap cap in triangle.CollisionCaps)
+            {
+                CheckCircleVsCircleCollision(cap, triangle);
             }
         }
     }
@@ -133,12 +143,17 @@ class Ball : EasyDraw
         foreach(LineSegment line in level.Lines)
         {
             CircleVSLineCollision(line, null);
+
         }
     }
 
-    void CheckBrickCollisions(CollisionFrame collisionFrame, Object owner)
+    void CheckCircleVsCircleCollision(LineCap cap, Object owner)
     {
-        CircleVSLineCollision(collisionFrame, owner);
+        Vec2 capToCircle = _position - cap._position;
+        if (capToCircle.Length() < _radius + cap._radius)
+        {
+            _velocity.Reflect(capToCircle.Normalized(), 1);
+        }
     }
 
     void CircleVSLineCollision(LineSegment line, Object owner)
@@ -193,11 +208,11 @@ class Ball : EasyDraw
 
             if(owner is Triangle triangle)
             {
-                triangle._hitPoints--; 
+                triangle._hitPoints--;
 
                 if(triangle._hitPoints <= 0)
                 {
-                    game.RemoveChild(triangle); 
+                    game.RemoveChild(triangle);
                 }
             }
 

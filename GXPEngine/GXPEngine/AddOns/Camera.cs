@@ -21,7 +21,7 @@ namespace GXPEngine {
 		/// The scale of the camera determines the "zoom factor" (High scale = zoom out)
 		/// </summary>
 		/// <param name="windowX">Left x coordinate of the render window.</param>
-		/// <param name="windowY">Top y coordinate of the render window.</param>
+		/// <param name="windowY">TopCap y coordinate of the render window.</param>
 		/// <param name="windowWidth">Width of the render window.</param>
 		/// <param name="windowHeight">Height of the render window.</param>
 		public Camera(int windowX, int windowY, int windowWidth, int windowHeight, bool clearBackground=true) {
