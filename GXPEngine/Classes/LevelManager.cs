@@ -9,6 +9,7 @@ class LevelManager : GameObject
     public List<LineSegment> Lines => _lines;
     public List<LineCap> Caps => _caps;
     public List<Block> Blocks => blocks;
+    public List<Triangle> Triangles => triangles;
 
     private MyGame game;
     private Ball ball;
@@ -138,7 +139,6 @@ class LevelManager : GameObject
     {
         ball.OnDestroyed -= HandleBallDestroyed;
         balls.Remove(ball);
-
     }
 
     public void SpawnBlocksAndTriangles()

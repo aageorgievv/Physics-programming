@@ -153,7 +153,7 @@ class Ball : EasyDraw
         if (capToCircle.Length() < _radius + cap._radius)
         {
             _velocity.Reflect(capToCircle.Normalized(), 1);
-            ReduceHealth(owner);
+            ReduceHealthAndKill(owner);
         }
     }
 
@@ -196,32 +196,11 @@ class Ball : EasyDraw
         {
             _position = pointOfImpact;
             _velocity.Reflect(lineNormal, 1);
-
-            if(owner is Block block)
-            {
-                block._hitPoints--;
-
-                if(block._hitPoints <= 0)
-                {
-                    game.RemoveChild(block);
-                }
-            }
-
-            if(owner is Triangle triangle)
-            {
-                triangle._hitPoints--;
-
-                if(triangle._hitPoints <= 0)
-                {
-                    game.RemoveChild(triangle);
-                }
-            }
-
+            ReduceHealthAndKill(owner);
             if(line.side == LineSide.Bottom)
             {
                 LateDestroy();
                 OnDestroyed?.Invoke(this);
-                ReduceHealth(owner);
 
                 if(line.side == LineSide.Bottom)
                 {
@@ -232,9 +211,8 @@ class Ball : EasyDraw
         }
     }
 
-    void ReduceHealth(Object owner)
+    void ReduceHealthAndKill(Object owner)
     {
-
         if(owner is Block block)
         {
             block._hitPoints--;
@@ -242,6 +220,7 @@ class Ball : EasyDraw
             if(block._hitPoints <= 0)
             {
                 game.RemoveChild(block);
+                level.Blocks.Remove(block);
             }
         }
 
@@ -252,9 +231,8 @@ class Ball : EasyDraw
             if(triangle._hitPoints <= 0)
             {
                 game.RemoveChild(triangle);
+                level.Triangles.Remove(triangle);
             }
         }
-
-
     }
 }
