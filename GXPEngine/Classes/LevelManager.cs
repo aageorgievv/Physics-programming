@@ -25,7 +25,7 @@ class LevelManager : GameObject
     private int border = 50;
     private int blockSize = 50;
     private int triangleSize = 75;
-    private int brickHealth = 50;
+    private int brickHealth = 1;
     private int playerSpeed = 7;
     private int playerRadius = 13;
     private int ballAmount = 20;
@@ -125,7 +125,7 @@ class LevelManager : GameObject
 
     public void SpawnBalls()
     {
-        for(int i = 0; i < 1 /*ballAmount*/; i++)
+        for(int i = 0; i < ballAmount; i++)
         {
             ball = new Ball(this, new Vec2(game.width / 2f, 500), playerRadius, playerSpeed);
             ball.OnDestroyed += HandleBallDestroyed;

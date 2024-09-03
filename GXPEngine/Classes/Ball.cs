@@ -153,6 +153,7 @@ class Ball : EasyDraw
         if (capToCircle.Length() < _radius + cap._radius)
         {
             _velocity.Reflect(capToCircle.Normalized(), 1);
+            ReduceHealth(owner);
         }
     }
 
@@ -220,7 +221,40 @@ class Ball : EasyDraw
             {
                 LateDestroy();
                 OnDestroyed?.Invoke(this);
+                ReduceHealth(owner);
+
+                if(line.side == LineSide.Bottom)
+                {
+                    LateDestroy();
+                    OnDestroyed?.Invoke(this);
+                }
             }
         }
+    }
+
+    void ReduceHealth(Object owner)
+    {
+
+        if(owner is Block block)
+        {
+            block._hitPoints--;
+
+            if(block._hitPoints <= 0)
+            {
+                game.RemoveChild(block);
+            }
+        }
+
+        if(owner is Triangle triangle)
+        {
+            triangle._hitPoints--;
+
+            if(triangle._hitPoints <= 0)
+            {
+                game.RemoveChild(triangle);
+            }
+        }
+
+
     }
 }
