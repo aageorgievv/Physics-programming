@@ -150,10 +150,53 @@ class Ball : EasyDraw
     void CheckCircleVsCircleCollision(LineCap cap, Object owner)
     {
         Vec2 capToCircle = _position - cap._position;
-        if (capToCircle.Length() < _radius + cap._radius)
+
+        //discrete collision check
+/*        if(capToCircle.Length() < _radius + cap._radius)
         {
             _velocity.Reflect(capToCircle.Normalized(), 1);
             ReduceHealthAndKill(owner);
+        }*/
+
+        //Continuous collision check
+        float combinedRadius = (_radius + cap._radius);
+        float a = _velocity.Dot(_velocity);
+        float b = 2 * capToCircle.Dot(_velocity);
+        float c = capToCircle.Dot(capToCircle) - combinedRadius * combinedRadius;
+
+        float d = b * b - 4 * (a * c);
+
+        float t = (-b - d * d) / (2 * a);
+
+        Vec2 POI = _position + _velocity * t;
+
+        if(a == 0)
+        {
+            return;
+        }
+
+        if (c < 0)
+        {
+            if (b < 0)
+            {
+                _velocity.Reflect(capToCircle.Normalized(), 1);
+                ReduceHealthAndKill(owner);
+            }
+        }
+
+        if(d < 0)
+        {
+            return;
+        }
+
+        if(0 <= t)
+        {
+            if(t < 1)
+            {
+                _position = POI;
+                _velocity.Reflect(capToCircle.Normalized(), 1);
+                ReduceHealthAndKill(owner);
+            }
         }
     }
 

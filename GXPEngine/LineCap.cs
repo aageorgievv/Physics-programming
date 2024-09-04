@@ -15,7 +15,7 @@ namespace GXPEngine
         public int _radius;
         private uint _color = 0xffffffff;
 
-        public LineCap(Vec2 position, int radius = 1, uint color = 0xffff0000)
+        public LineCap(Vec2 position, int radius = 2, uint color = 0xffff0000)
         {
             _position = position;
             _radius = radius;

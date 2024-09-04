@@ -28,7 +28,7 @@ class LevelManager : GameObject
     private int brickHealth = 50;
     private int playerSpeed = 7;
     private int playerRadius = 13;
-    private int ballAmount = 20;
+    private int ballAmount = 10;
 
     private bool spawnedTriangle = false;
 
