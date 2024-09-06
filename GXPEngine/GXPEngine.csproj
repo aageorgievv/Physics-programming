@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Classes\Ball.cs" />
     <Compile Include="Classes\Block.cs" />
+    <Compile Include="Classes\Square.cs" />
     <Compile Include="Classes\CollisionFrame.cs" />
     <Compile Include="Classes\CollisionInfo.cs" />
     <Compile Include="Classes\LevelManager.cs" />

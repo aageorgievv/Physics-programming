@@ -1,30 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using GXPEngine;
-
-
-class Triangle : Block
+class Square : Block
 {
-    public CollisionFrame Left;
-    public CollisionFrame Bottom;
-    public CollisionFrame Right;
+    CollisionFrame Top;
+    CollisionFrame Bottom;
+    CollisionFrame Left;
+    CollisionFrame Right;
 
-    public LineCap TopCap;
+    public LineCap TopRightCap;
+    public LineCap TopLeftCap;
     public LineCap BottomRightCap;
     public LineCap BottomLeftCap;
 
-    public List<CollisionFrame> CollisionFrames = new List<CollisionFrame>();
-    public List<LineCap> CollisionCaps = new List<LineCap>();
-
-    public Triangle(Vec2 position, int width, int height, int hitPoints) : base(position, width, height, hitPoints, false)
+    public Square(Vec2 position, int width, int height, int hitPoints) : base(position, width, height, hitPoints, false)
     {
         hitPointNumber = new EasyDraw(width, height);
         hitPointNumber.TextAlign(CenterMode.Center, CenterMode.Center);
         hitPointNumber.TextSize(30);
-        AddChild(hitPointNumber);
 
-        Draw(100, 100, 100);
+        Draw(0,100, 0);
         AddCollisionFrame();
     }
 
@@ -38,50 +33,56 @@ class Triangle : Block
     {
         Fill(red, green, blue);
         Stroke(red, green, blue);
-        Triangle(width / 2f, 0, width, height, 0, height);
+        ShapeAlign(CenterMode.Min, CenterMode.Min); 
+        Rect(0, 0, width, height);
     }
 
     void DrawHitPoints()
     {
         hitPointNumber.Clear(Color.Empty);
         hitPointNumber.Fill(Color.Yellow);
-        hitPointNumber.TextAlign(CenterMode.Center, CenterMode.Center);
-        hitPointNumber.Text(" " + _hitPoints, width / 2f - offSetX, height / 2 - 5 + offSetY);
-        
-
+        hitPointNumber.Text(" " + _hitPoints , width / 2f - offSetX, height / 2f + offSetX);
+        AddChild(hitPointNumber);
     }
 
     public void AddCollisionFrame()
     {
+        Top = new CollisionFrame(new Vec2(0, 0), new Vec2(width, 0), 0xff00ff00, 3);
         Bottom = new CollisionFrame(new Vec2(0, height), new Vec2(width, height), 0xff00ff00, 3);
-        Right = new CollisionFrame(new Vec2(width / 2f, 0), new Vec2(width, height), 0xff00ff00, 3);
-        Left = new CollisionFrame(new Vec2(width / 2f, 0), new Vec2(0, height), 0xff00ff00, 3);
+        Left = new CollisionFrame(new Vec2(0, 0), new Vec2(0, height), 0xff00ff00, 3);
+        Right = new CollisionFrame(new Vec2(width, 0), new Vec2(width, height), 0xff00ff00, 3);
 
+        AddChild(Top);
         AddChild(Bottom);
-        AddChild(Right);
         AddChild(Left);
+        AddChild(Right);
 
+        CollisionFrames.Add(Top);
         CollisionFrames.Add(Bottom);
         CollisionFrames.Add(Left);
         CollisionFrames.Add(Right);
 
-        TopCap = new LineCap(new Vec2(_position.x + width / 2f, _position.y));
+        TopRightCap = new LineCap(new Vec2(_position.x + width, _position.y));
+        TopLeftCap = new LineCap(new Vec2(_position.x, _position.y));
         BottomRightCap = new LineCap(new Vec2(_position.x + width, _position.y + height));
         BottomLeftCap = new LineCap(new Vec2(_position.x, _position.y + height));
 
-
-        AddChild(TopCap);
+        AddChild(TopRightCap);
+        AddChild(TopLeftCap);
         AddChild(BottomRightCap);
         AddChild(BottomLeftCap);
 
-        CollisionCaps.Add(TopCap);
+        CollisionCaps.Add(TopRightCap);
+        CollisionCaps.Add(TopLeftCap);
         CollisionCaps.Add(BottomRightCap);
         CollisionCaps.Add(BottomLeftCap);
+
     }
 
     void UpdateLineCaps()
     {
-                TopCap._position = new Vec2(_position.x + width / 2f, _position.y);
+        TopRightCap._position = new Vec2(_position.x + width, _position.y);
+        TopLeftCap._position = new Vec2(_position.x, _position.y);
         BottomRightCap._position = new Vec2(_position.x + width, _position.y + height);
         BottomLeftCap._position = new Vec2(_position.x, _position.y + height);
     }
