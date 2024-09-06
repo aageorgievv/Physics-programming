@@ -13,6 +13,9 @@ class Square : Block
     public LineCap BottomRightCap;
     public LineCap BottomLeftCap;
 
+    public List<CollisionFrame> CollisionFrames = new List<CollisionFrame>();
+    public List<LineCap> CollisionCaps = new List<LineCap>();
+
     public Square(Vec2 position, int width, int height, int hitPoints) : base(position, width, height, hitPoints, false)
     {
         hitPointNumber = new EasyDraw(width, height);

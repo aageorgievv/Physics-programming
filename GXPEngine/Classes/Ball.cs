@@ -50,7 +50,7 @@ class Ball : EasyDraw
         AimAndRotate();
         Move();
         CheckBoundaryCollisions();
-        CheckBlockOverlaps();
+        CheckSquareOverlaps();
         CheckTriangleOverlaps();
         //DrawBounds();
     }
@@ -100,11 +100,11 @@ class Ball : EasyDraw
         }
     }
 
-    void CheckBlockOverlaps()
+    void CheckSquareOverlaps()
     {
         for(int i = 0; i < level.GetNumberOfBlocks(); i++)
         {
-            Square square = level.GetBlock(i);
+            Square square = level.GetSquare(i);
 
             foreach(CollisionFrame frame in square.CollisionFrames)
             {
@@ -243,26 +243,20 @@ class Ball : EasyDraw
             {
                 LateDestroy();
                 OnDestroyed?.Invoke(this);
-
-                if(line.side == LineSide.Bottom)
-                {
-                    LateDestroy();
-                    OnDestroyed?.Invoke(this);
-                }
             }
         }
     }
 
     void HitBlock(Object owner)
     {
-        if(owner is Square block)
+        if(owner is Square square)
         {
-            block.TakeDamage(1);
+            square.TakeDamage(1);
 
-            if(block.IsDead)
+            if(square.IsDead)
             {
-                game.RemoveChild(block);
-                level.Blocks.Remove(block);
+                game.RemoveChild(square);
+                level.Squares.Remove(square);
             }
         }
 

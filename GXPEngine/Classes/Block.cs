@@ -1,5 +1,4 @@
 ﻿using GXPEngine;
-using System.Collections.Generic;
 
 public class Block : EasyDraw
 {
@@ -10,10 +9,6 @@ public class Block : EasyDraw
     public int offSetY = 25;
 
     public EasyDraw hitPointNumber;
-
-    public List<CollisionFrame> CollisionFrames = new List<CollisionFrame>();
-    public List<LineCap> CollisionCaps = new List<LineCap>();
-
 
     public Vec2 _position
     {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using GXPEngine;
 class LevelManager : GameObject
 {
-
     public List<LineSegment> Lines => _lines;
     public List<Square> Squares => squares;
     public List<Triangle> Triangles => triangles;
@@ -15,15 +14,15 @@ class LevelManager : GameObject
 
     private int startTriangleX = 22;
     private int startTriangleY = 115;
-    private int startBlockX = 35;
+    private int startSquareX = 35;
     private int startBlockY = 20;
     private int spacingX = 150;
     private int spacingY = 30;
     private int shiftY = 125;
     private int border = 50;
-    private int blockSize = 50;
+    private int squareSize = 50;
     private int triangleSize = 75;
-    private int brickHealth = 50;
+    private int blockHealth = 50;
     private int playerSpeed = 7;
     private int playerRadius = 13;
     private int ballAmount = 10;
@@ -63,27 +62,27 @@ class LevelManager : GameObject
         if(balls.Count == 0)
         {
             // all balls are destroyed
-
             ball.hasShot = false;
 
+            //Shift the blocks down
             foreach(Square square in squares)
             {
-                //Shift all squares down
                 square.y += shiftY;
-            }
-
-            foreach(Square block in squares)
-            {
-                if(block.y + block.height >= bottomLine.start.y)
-                {
-                    // game over
-                    Console.WriteLine($"Game Over");
-                }
             }
 
             foreach(Triangle triangle in triangles)
             {
                 triangle.y += shiftY;
+            }
+
+            //Check if the blocks are underneath the bottom boundary
+            foreach(Square square in squares)
+            {
+                if(square.y + square.height >= bottomLine.start.y)
+                {
+                    // game over
+                    Console.WriteLine($"Game Over");
+                }
             }
 
             foreach(Triangle triangle in triangles)
@@ -95,11 +94,12 @@ class LevelManager : GameObject
                 }
             }
 
+            //Spawn a new row of blocks
             if(!spawnedTriangle)
             {
                 for(int x = 0; x < 10; x++)
                 {
-                    triangle = new Triangle(new Vec2(startTriangleX + spacingX * x, 20 + spacingY), triangleSize, triangleSize, brickHealth);
+                    triangle = new Triangle(new Vec2(startTriangleX + spacingX * x, 20 + spacingY), triangleSize, triangleSize, blockHealth);
                     triangles.Add(triangle);
                     game.AddChild(triangle);
                     spawnedTriangle = true;
@@ -108,13 +108,12 @@ class LevelManager : GameObject
             {
                 for(int x = 0; x < 10; x++)
                 {
-                    square = new Square(new Vec2(startBlockX + spacingX * x, 35 + spacingY), blockSize, blockSize, brickHealth);
+                    square = new Square(new Vec2(startSquareX + spacingX * x, 35 + spacingY), squareSize, squareSize, blockHealth);
                     squares.Add(square);
                     game.AddChild(square);
                     spawnedTriangle = false;
                 }
             }
-
 
             SpawnBalls();
         }
@@ -134,12 +133,13 @@ class LevelManager : GameObject
     private void HandleBallDestroyed(Ball ball)
     {
         ball.OnDestroyed -= HandleBallDestroyed;
+        game.RemoveChild(ball);
         balls.Remove(ball);
     }
 
     public void SpawnBlocksAndTriangles()
     {
-        /*        square = new Square(new Vec2(300, 400), blockSize, blockSize, brickHealth);
+        /*        square = new Square(new Vec2(300, 400), squareSize, squareSize, blockHealth);
                 squares.Add(square);
                 game.AddChild(square);
 
@@ -156,7 +156,7 @@ class LevelManager : GameObject
         {
             for(int x = 0; x < 10; x++)
             {
-                square = new Square(new Vec2(startBlockX + spacingX * x, startBlockY + spacingY), blockSize, blockSize, brickHealth);
+                square = new Square(new Vec2(startSquareX + spacingX * x, startBlockY + spacingY), squareSize, squareSize, blockHealth);
                 squares.Add(square);
                 game.AddChild(square);
             }
@@ -167,7 +167,7 @@ class LevelManager : GameObject
             for(int x = 0; x < 10; x++)
             {
 
-                triangle = new Triangle(new Vec2(startTriangleX + spacingX * x, startTriangleY + spacingY), triangleSize, triangleSize, brickHealth);
+                triangle = new Triangle(new Vec2(startTriangleX + spacingX * x, startTriangleY + spacingY), triangleSize, triangleSize, blockHealth);
                 triangles.Add(triangle);
                 game.AddChild(triangle);
             }
@@ -179,7 +179,7 @@ class LevelManager : GameObject
         return squares.Count;
     }
 
-    public Square GetBlock(int index)
+    public Square GetSquare(int index)
     {
         if(index >= 0 && index < squares.Count)
         {
