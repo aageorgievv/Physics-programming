@@ -4,13 +4,10 @@ using GXPEngine;
 class LevelManager : GameObject
 {
     public List<LineSegment> Lines => _lines;
-    public List<Square> Squares => squares;
-    public List<Triangle> Triangles => triangles;
+    public List<Block> Blocks => blocks;
 
     private MyGame game;
     private Ball ball;
-    private Square square;
-    private Triangle triangle;
 
     private int startTriangleX = 22;
     private int startTriangleY = 115;
@@ -30,8 +27,7 @@ class LevelManager : GameObject
     private bool spawnedTriangle = false;
 
 
-    private List<Square> squares = new List<Square>();
-    private List<Triangle> triangles = new List<Triangle>();
+    private List<Block> blocks = new List<Block>();
     private List<LineSegment> _lines = new List<LineSegment>();
     private List<Ball> balls = new List<Ball>();
 
@@ -64,34 +60,21 @@ class LevelManager : GameObject
             // all balls are destroyed
             ball.hasShot = false;
 
-            //Shift the blocks down
-            foreach(Square square in squares)
+            //Shift the blocks down and check if the blocks are underneath the bottom boundary
+            foreach(Block block in blocks)
             {
-                square.y += shiftY;
-            }
+                block.y += shiftY;
 
-            foreach(Triangle triangle in triangles)
-            {
-                triangle.y += shiftY;
-            }
-
-            //Check if the blocks are underneath the bottom boundary
-            foreach(Square square in squares)
-            {
-                if(square.y + square.height >= bottomLine.start.y)
+                if(block.y + block.height >= bottomLine.start.y)
                 {
                     // game over
                     Console.WriteLine($"Game Over");
                 }
             }
 
-            foreach(Triangle triangle in triangles)
+            foreach(Block block in blocks)
             {
-                if(triangle.y + triangle.height >= bottomLine.start.y)
-                {
-                    // game over
-                    Console.WriteLine($"Game Over");
-                }
+ 
             }
 
             //Spawn a new row of blocks
@@ -99,18 +82,18 @@ class LevelManager : GameObject
             {
                 for(int x = 0; x < 10; x++)
                 {
-                    triangle = new Triangle(new Vec2(startTriangleX + spacingX * x, 20 + spacingY), triangleSize, triangleSize, blockHealth);
-                    triangles.Add(triangle);
-                    game.AddChild(triangle);
+                    Block block = new Triangle(new Vec2(startTriangleX + spacingX * x, 20 + spacingY), triangleSize, triangleSize, blockHealth);
+                    blocks.Add(block);
+                    game.AddChild(block);
                     spawnedTriangle = true;
                 }
             } else
             {
                 for(int x = 0; x < 10; x++)
                 {
-                    square = new Square(new Vec2(startSquareX + spacingX * x, 35 + spacingY), squareSize, squareSize, blockHealth);
-                    squares.Add(square);
-                    game.AddChild(square);
+                    Block block = new Square(new Vec2(startSquareX + spacingX * x, 35 + spacingY), squareSize, squareSize, blockHealth);
+                    blocks.Add(block);
+                    game.AddChild(block);
                     spawnedTriangle = false;
                 }
             }
@@ -133,14 +116,19 @@ class LevelManager : GameObject
     private void HandleBallDestroyed(Ball ball)
     {
         ball.OnDestroyed -= HandleBallDestroyed;
-        game.RemoveChild(ball);
         balls.Remove(ball);
+    }
+
+    private void HandleBlockDestroyed(Block block)
+    {
+        block.OnDestroyed -= HandleBlockDestroyed;
+        blocks.Remove(block);
     }
 
     public void SpawnBlocksAndTriangles()
     {
         /*        square = new Square(new Vec2(300, 400), squareSize, squareSize, blockHealth);
-                squares.Add(square);
+                blocks.Add(square);
                 game.AddChild(square);
 
                 triangle = new Triangle(new Vec2(350 + spacingX * x, 200 + spacingY * y), 100, 100, 50);
@@ -156,48 +144,29 @@ class LevelManager : GameObject
         {
             for(int x = 0; x < 10; x++)
             {
-                square = new Square(new Vec2(startSquareX + spacingX * x, startBlockY + spacingY), squareSize, squareSize, blockHealth);
-                squares.Add(square);
-                game.AddChild(square);
-            }
-        }
+                Block blockSquare = new Square(new Vec2(startSquareX + spacingX * x, startBlockY + spacingY), squareSize, squareSize, blockHealth);
+                blockSquare.OnDestroyed += HandleBlockDestroyed;
+                blocks.Add(blockSquare);
+                game.AddChild(blockSquare);
 
-        for(int y = 0; y < 1; y++)
-        {
-            for(int x = 0; x < 10; x++)
-            {
-
-                triangle = new Triangle(new Vec2(startTriangleX + spacingX * x, startTriangleY + spacingY), triangleSize, triangleSize, blockHealth);
-                triangles.Add(triangle);
-                game.AddChild(triangle);
+                Block blockTriangle = new Triangle(new Vec2(startTriangleX + spacingX * x, startTriangleY + spacingY), triangleSize, triangleSize, blockHealth);
+                blockTriangle.OnDestroyed += HandleBlockDestroyed;
+                blocks.Add(blockTriangle);
+                game.AddChild(blockTriangle);
             }
         }
     }
 
     public int GetNumberOfBlocks()
     {
-        return squares.Count;
+        return blocks.Count;
     }
 
-    public Square GetSquare(int index)
+    public Block GetBlock(int index)
     {
-        if(index >= 0 && index < squares.Count)
+        if(index >= 0 && index < blocks.Count)
         {
-            return squares[index];
-        }
-        return null;
-    }
-
-    public int GetNumberOfTriangles()
-    {
-        return triangles.Count;
-    }
-
-    public Triangle GetTriangle(int index)
-    {
-        if(index >= 0 && index < triangles.Count)
-        {
-            return triangles[index];
+            return blocks[index];
         }
         return null;
     }

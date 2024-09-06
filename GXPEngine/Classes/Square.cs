@@ -1,6 +1,54 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using GXPEngine;
+
+
+public abstract class BaseClass
+{
+    // ok ill do it simpler, cause this is just gonna get complicated otherwise
+
+    public abstract int SomeNumber { get; }
+
+
+    public abstract int SomeFunctionThatReturnsANumber();
+
+}
+
+
+public class DerivedClass : BaseClass
+{
+    public override int SomeNumber => 5;
+    public override int SomeFunctionThatReturnsANumber()
+    {
+        throw new System.NotImplementedException();
+    }
+}
+
+public class SomeOtherDerivedClass : BaseClass
+{
+    public override int SomeNumber => 10;
+    public override int SomeFunctionThatReturnsANumber()
+    {
+        throw new System.NotImplementedException();
+    }
+}
+
+
+public class SomeOtherRandomClass
+{
+    public void SomeFunction()
+    {
+        BaseClass baseClass = new DerivedClass();
+        BaseClass derivedClass = new SomeOtherDerivedClass();
+
+
+    }
+}
+
+
+
+
 class Square : Block
 {
     CollisionFrame Top;
@@ -13,8 +61,11 @@ class Square : Block
     public LineCap BottomRightCap;
     public LineCap BottomLeftCap;
 
-    public List<CollisionFrame> CollisionFrames = new List<CollisionFrame>();
-    public List<LineCap> CollisionCaps = new List<LineCap>();
+    public override List<CollisionFrame> CollisionFrames => collisionFrames;
+    public override List<LineCap> CollisionCaps => collisionCaps;
+
+    private List<CollisionFrame> collisionFrames = new List<CollisionFrame>();
+    private List<LineCap> collisionCaps = new List<LineCap>();
 
     public Square(Vec2 position, int width, int height, int hitPoints) : base(position, width, height, hitPoints, false)
     {
@@ -60,10 +111,10 @@ class Square : Block
         AddChild(Left);
         AddChild(Right);
 
-        CollisionFrames.Add(Top);
-        CollisionFrames.Add(Bottom);
-        CollisionFrames.Add(Left);
-        CollisionFrames.Add(Right);
+        collisionFrames.Add(Top);
+        collisionFrames.Add(Bottom);
+        collisionFrames.Add(Left);
+        collisionFrames.Add(Right);
 
         TopRightCap = new LineCap(new Vec2(_position.x + width, _position.y));
         TopLeftCap = new LineCap(new Vec2(_position.x, _position.y));
@@ -75,10 +126,10 @@ class Square : Block
         AddChild(BottomRightCap);
         AddChild(BottomLeftCap);
 
-        CollisionCaps.Add(TopRightCap);
-        CollisionCaps.Add(TopLeftCap);
-        CollisionCaps.Add(BottomRightCap);
-        CollisionCaps.Add(BottomLeftCap);
+        collisionCaps.Add(TopRightCap);
+        collisionCaps.Add(TopLeftCap);
+        collisionCaps.Add(BottomRightCap);
+        collisionCaps.Add(BottomLeftCap);
 
     }
 

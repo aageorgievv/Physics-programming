@@ -50,8 +50,7 @@ class Ball : EasyDraw
         AimAndRotate();
         Move();
         CheckBoundaryCollisions();
-        CheckSquareOverlaps();
-        CheckTriangleOverlaps();
+        CheckOverlaps();
         //DrawBounds();
     }
 
@@ -100,38 +99,20 @@ class Ball : EasyDraw
         }
     }
 
-    void CheckSquareOverlaps()
+    void CheckOverlaps()
     {
         for(int i = 0; i < level.GetNumberOfBlocks(); i++)
         {
-            Square square = level.GetSquare(i);
+            Block block = level.GetBlock(i);
 
-            foreach(CollisionFrame frame in square.CollisionFrames)
+            foreach(CollisionFrame frame in block.CollisionFrames)
             {
-                CircleVSLineCollision(frame, square);
+                CircleVSLineCollision(frame, block);
             }
 
-            foreach(LineCap cap in square.CollisionCaps)
+            foreach(LineCap cap in block.CollisionCaps)
             {
-                CheckCircleVsCircleCollision(cap, square);
-            }
-        }
-    }
-
-    void CheckTriangleOverlaps()
-    {
-        for(int i = 0; i < level.GetNumberOfTriangles(); i++)
-        {
-            Triangle triangle = level.GetTriangle(i);
-
-            foreach(CollisionFrame frame in triangle.CollisionFrames)
-            {
-                CircleVSLineCollision(frame, triangle);
-            }
-
-            foreach(LineCap cap in triangle.CollisionCaps)
-            {
-                CheckCircleVsCircleCollision(cap, triangle);
+                CheckCircleVsCircleCollision(cap, block);
             }
         }
     }
@@ -146,7 +127,7 @@ class Ball : EasyDraw
         }
     }
 
-    void CheckCircleVsCircleCollision(LineCap cap, Object owner)
+    void CheckCircleVsCircleCollision(LineCap cap, Block block)
     {
         Vec2 capToCircle = _position - cap._position;
 
@@ -154,7 +135,7 @@ class Ball : EasyDraw
 /*        if(capToCircle.Length() < _radius + cap._radius)
         {
             _velocity.Reflect(capToCircle.Normalized(), 1);
-            HitBlock(owner);
+            HitBlock(block);
         }*/
 
         //Continuous collision check
@@ -179,7 +160,7 @@ class Ball : EasyDraw
             if (b < 0)
             {
                 _velocity.Reflect(capToCircle.Normalized(), 1);
-                HitBlock(owner);
+                HitBlock(block);
             }
         }
 
@@ -194,12 +175,12 @@ class Ball : EasyDraw
             {
                 _position = POI;
                 _velocity.Reflect(capToCircle.Normalized(), 1);
-                HitBlock(owner);
+                HitBlock(block);
             }
         }
     }
 
-    void CircleVSLineCollision(LineSegment line, Object owner)
+    void CircleVSLineCollision(LineSegment line, Block block)
     {
         Vector2 startTransformed = line.TransformPoint(line.start.x, line.start.y);
         Vector2 endTransformed = line.TransformPoint(line.end.x, line.end.y);
@@ -238,7 +219,12 @@ class Ball : EasyDraw
         {
             _position = pointOfImpact;
             _velocity.Reflect(lineNormal, 1);
-            HitBlock(owner);
+
+            if(block != null)
+            {
+                HitBlock(block);
+            }
+
             if(line.side == LineSide.Bottom)
             {
                 LateDestroy();
@@ -247,28 +233,8 @@ class Ball : EasyDraw
         }
     }
 
-    void HitBlock(Object owner)
+    void HitBlock(Block block)
     {
-        if(owner is Square square)
-        {
-            square.TakeDamage(1);
-
-            if(square.IsDead)
-            {
-                game.RemoveChild(square);
-                level.Squares.Remove(square);
-            }
-        }
-
-        if(owner is Triangle triangle)
-        {
-            triangle.TakeDamage(1);
-
-            if(triangle.IsDead)
-            {
-                game.RemoveChild(triangle);
-                level.Triangles.Remove(triangle);
-            }
-        }
+        block.TakeDamage(1);
     }
 }

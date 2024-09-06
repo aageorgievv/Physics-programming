@@ -14,8 +14,11 @@ class Triangle : Block
     public LineCap BottomRightCap;
     public LineCap BottomLeftCap;
 
-    public List<CollisionFrame> CollisionFrames = new List<CollisionFrame>();
-    public List<LineCap> CollisionCaps = new List<LineCap>();
+    public override List<CollisionFrame> CollisionFrames => collisionFrames;
+    public override List<LineCap> CollisionCaps => collisionCaps;
+
+    private List<CollisionFrame> collisionFrames = new List<CollisionFrame>();
+    private List<LineCap> collisionCaps = new List<LineCap>();
 
     public Triangle(Vec2 position, int width, int height, int hitPoints) : base(position, width, height, hitPoints, false)
     {
@@ -61,9 +64,9 @@ class Triangle : Block
         AddChild(Right);
         AddChild(Left);
 
-        CollisionFrames.Add(Bottom);
-        CollisionFrames.Add(Left);
-        CollisionFrames.Add(Right);
+        collisionFrames.Add(Bottom);
+        collisionFrames.Add(Left);
+        collisionFrames.Add(Right);
 
         TopCap = new LineCap(new Vec2(_position.x + width / 2f, _position.y));
         BottomRightCap = new LineCap(new Vec2(_position.x + width, _position.y + height));
@@ -74,9 +77,9 @@ class Triangle : Block
         AddChild(BottomRightCap);
         AddChild(BottomLeftCap);
 
-        CollisionCaps.Add(TopCap);
-        CollisionCaps.Add(BottomRightCap);
-        CollisionCaps.Add(BottomLeftCap);
+        collisionCaps.Add(TopCap);
+        collisionCaps.Add(BottomRightCap);
+        collisionCaps.Add(BottomLeftCap);
     }
 
     void UpdateLineCaps()
